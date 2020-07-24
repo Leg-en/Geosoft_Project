@@ -17,4 +17,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+//Bibs Verfügbar machen
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
+app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
+
 module.exports = app;

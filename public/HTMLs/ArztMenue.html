@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Distances</title>
+    <link rel="stylesheet" href="/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../stylesheets/style.css">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="Startseite">Startseite</a>
+            <a class="nav-item nav-link" href="fahrt">Fahrt Tätigen</a>
+            <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten</a>
+            <a class="nav-item nav-link active" href="Arzt">Arzt Menü<span class="sr-only">(current)</span></a>
+        </div>
+    </div>
+</nav>
+
+<br>
+<div class="container mw-100">
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="mapid"></div>
+        </div>
+        <div class="col-lg-6">
+            <h4 class="display-4">Alle hinterlegten Fahrten</h4>
+            <h4 class="display-4">Geflaggte Fahrten</h4>
+
+        </div>
+    </div>
+</div>
+
+
+<br>
+<footer id="sticky-footer" class="py-4 bg-dark text-white-50 fixed-bottom">
+    <div class="container text-center">
+        <small>
+            Autor: Busemann, Sterthaus <br>
+            Organisation: WWU <br>
+            Aufgabe: Projekt
+        </small>
+    </div>
+</footer>
+
+
+
+
+
+<script src="/leaflet/leaflet.js"></script>
+<script src="/jquery/jquery.js"></script>
+<script src="/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="../javascripts/Map.js"></script>
+</body>
+</html>
