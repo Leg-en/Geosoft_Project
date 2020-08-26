@@ -23,4 +23,7 @@ router.get('/Arzt', function(req, res, next) {
 router.get('/Registrierung', function(req, res, next) {
   res.sendFile(publicdir+'/Registrierung.html');
 });
+router.get('/Login', function(req, res, next) {
+  res.sendFile(publicdir+'/Login.html');
+});
 module.exports = router;
