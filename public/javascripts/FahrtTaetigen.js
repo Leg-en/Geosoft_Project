@@ -4,7 +4,8 @@ var Points = {
 }
 var hereData = null;
 var processedData = null;
-
+var standortMarker = L.marker([0,0]).addTo(map)
+standortMarker.setOpacity(0)
 
 /**
  * Ruft die Daten von 'Here' ab.
@@ -126,7 +127,6 @@ function printData(div, iterator) {
 }
 
 function geocoding(Input, point) {
-    console.log(Input)
     $.ajax(   // request url
         {
             url: "https://api.mapbox.com/geocoding/v5/mapbox.places/"+Input+".json",
@@ -157,6 +157,9 @@ function geocoding(Input, point) {
 function main() {
 
     geocoding($("#Start").val(), "pointA");
+    standortMarker.setLatLng([Points.pointA.features[0].geometry.coordinates[1],Points.pointA.features[0].geometry.coordinates[0]]);
+    map.setView([Points.pointA.features[0].geometry.coordinates[1],Points.pointA.features[0].geometry.coordinates[0]]);
+    standortMarker.setOpacity(1)
     geocoding($("#Ziel").val(), "pointB");
     requestData(Points.pointA.features[0].geometry.coordinates, Points.pointB.features[0].geometry.coordinates, $("#Anzahl").val());
 }
@@ -168,6 +171,10 @@ function locate(){
             console.log(x.coords.longitude)
             console.log(x.coords.latitude)
             map.setView([x.coords.latitude,x.coords.longitude])
+            reverseGeocoding(x.coords.latitude,x.coords.longitude)
+            standortMarker.setLatLng([x.coords.latitude,x.coords.longitude]);
+            standortMarker.setOpacity(1)
+
 
 
 
@@ -179,4 +186,26 @@ function locate(){
         //Geolocation nicht verwendet
         console.log("Geolocation nicht unterstützt")
     }
+}
+
+function reverseGeocoding(lat, lng){
+    $.ajax(   // request url
+        {
+            url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + lng + "," + lat + ".json?",
+            data: {
+                access_token: 'pk.eyJ1IjoibGVnZW4yNiIsImEiOiJja2FremZxdTIwNTZpMnpucWw2d2Q3anJ3In0.exarKxsiFDy1QZKMYHvlNQ' //Todo: Löschen
+            },
+            dataType: 'json',
+            timeout: 3000,
+            async: false,
+            success: function (data, status, xhr) {// success callback function
+                if(status == "success"){
+                    document.getElementById("Start").value = data.features[0].place_name;
+                }
+
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback
+                console.log("Fehlschlag")
+            }
+        });
 }
