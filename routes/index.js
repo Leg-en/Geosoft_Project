@@ -20,4 +20,7 @@ router.get('/GetaetigteFahrten', function(req, res, next) {
 router.get('/Arzt', function(req, res, next) {
   res.sendFile(publicdir+'/ArztMenue.html');
 });
+router.get('/Registrierung', function(req, res, next) {
+  res.sendFile(publicdir+'/Registrierung.html');
+});
 module.exports = router;
