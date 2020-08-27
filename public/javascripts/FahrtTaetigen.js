@@ -6,6 +6,7 @@ var hereData = null;
 var processedData = null;
 var standortMarker = L.marker([0,0]).addTo(map)
 standortMarker.setOpacity(0)
+var haltestellen = [];
 
 /**
  * Ruft die Daten von 'Here' ab.
@@ -30,8 +31,20 @@ function requestData(Start, Ziel, Anzahl) {
                 if(status == "success"){
                     console.log("Erfolg")
                     console.dir(data)
-                    hereData = data;
-                    preProcessData()
+                    //Blöde Lösung. Jedoch muss überprüft werden ob überhaupt eine Route gefunden wurde. Und wenn eine gefunden wurde gibts keine Notiz..
+                    try{
+                        if(data.notices[0].code != "noCoverage"){
+                            hereData = data;
+                            preProcessData()
+                        }else{
+                            console.log("Fehler bei Routenberechnung")
+                            //Todo: Fancy Fehlermeldung einfügen
+                        }
+                    }catch (e){
+                        hereData = data;
+                        preProcessData()
+                    }
+
                 }
 
             },
@@ -65,10 +78,13 @@ function preProcessData(){
                 resData[j][i][4] = temp.arrival.place.location.lat + ","+ temp.arrival.place.location.lng
             }
             resData[j][i][5] = temp.arrival.time;
+            //Interne Daten
+            resData[j][i][6] = temp.departure.place.location
 
         }
     }
     processedData = resData;
+    console.log(processedData)
     var tab = document.getElementById("tab")
     tab.innerHTML = ""
     for(var i = 0; i < hereData.routes.length; i++){
@@ -78,6 +94,20 @@ function preProcessData(){
         printData(div,i)
     }
 
+    //Alte Marker Entfernen
+    for (var i in haltestellen){
+        map.removeLayer(haltestellen[i])
+    }
+    //Haltestellen einblenden
+    for(var i = 0; i<hereData.routes.length; i++){
+        for(var j = 0; j<resData[i].length; j++){
+            if(resData[i][j][1] == "transit"){
+                marker = L.marker(resData[i][j][6]).addTo(map)
+                haltestellen[i] = marker;
+                break;
+            }
+        }
+    }
 
 
 }
@@ -96,7 +126,7 @@ function printData(div, iterator) {
     thead.appendChild(row);
 
 
-        for(var j in processedData[iterator]){
+        for(var j = 0; j<6;j++){
             var row = document.createElement("tr")
             for(var u in processedData[iterator][j]){
                 var cell = document.createElement('td')
@@ -157,9 +187,11 @@ function geocoding(Input, point) {
 function main() {
 
     geocoding($("#Start").val(), "pointA");
+
     standortMarker.setLatLng([Points.pointA.features[0].geometry.coordinates[1],Points.pointA.features[0].geometry.coordinates[0]]);
     map.setView([Points.pointA.features[0].geometry.coordinates[1],Points.pointA.features[0].geometry.coordinates[0]]);
     standortMarker.setOpacity(1)
+
     geocoding($("#Ziel").val(), "pointB");
     requestData(Points.pointA.features[0].geometry.coordinates, Points.pointB.features[0].geometry.coordinates, $("#Anzahl").val());
 }

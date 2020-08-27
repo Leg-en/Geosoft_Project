@@ -13,6 +13,9 @@ router.get('/Startseite', function(req, res, next) {
 router.get('/fahrt', function(req, res, next) {
   res.sendFile(publicdir+'/FahrtTaetigen.html');
 });
+router.get('/fahrtdef', function(req, res, next) {
+  res.sendFile(publicdir+'/FahrtTaetigenSimple.html');
+});
 router.get('/GetaetigteFahrten', function(req, res, next) {
   res.sendFile(publicdir+'/GetaetigteFahrten.html');
 });
