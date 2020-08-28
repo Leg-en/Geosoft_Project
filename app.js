@@ -3,6 +3,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongodb = require('mongodb');
+//Login System
+var passport = require('passport')
+var LocalStrategy = require("passport-local").Strategy;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -17,6 +20,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+//Für  Login
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Bibs Verfügbar machen
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
@@ -38,6 +44,12 @@ async function connectMongoDB() {
     }
 }
 connectMongoDB()
+
+passport.use(new LocalStrategy(
+    function (username, password, done){
+        //Todo: Fertigstellen
+    }
+))
 
 
 module.exports = app;

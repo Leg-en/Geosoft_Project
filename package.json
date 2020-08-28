@@ -14,7 +14,8 @@
     "leaflet": "^1.6.0",
     "leaflet.markercluster": "^1.4.1",
     "morgan": "~1.9.1",
-    "passport": "^0.4.1"
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "mongodb": "^3.6.0"
