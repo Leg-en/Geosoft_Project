@@ -29,4 +29,21 @@ router.get('/Registrierung', function(req, res, next) {
 router.get('/Login', function(req, res, next) {
   res.sendFile(publicdir+'/Login.html');
 });
+
+//Datenbakrouten
+//Müsste eine Fahrt entgegennehmen und speichern
+router.post("/setFahrten", (req, res)=>{
+  //Todo: Evtl daten erst verifizieren bevor ich sie in die Datenbank packe
+  app.locals.db.collection("fahrten").insertOne(req.body);
+  res.send({status: 'SUCCESS'});
+});
+//Sendet Fahrt zurück
+//Todo: Fahrt Filtern
+router.get("/getFahrten", (req, res)=>{
+  app.locals.db.collection("fahrten").find({}).toArray((mongoError, result)=>{
+    if(mongoError) throw mongoError;
+    res.json(result);
+  });
+})
+
 module.exports = router;
