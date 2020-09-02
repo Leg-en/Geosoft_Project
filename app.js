@@ -3,15 +3,23 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongodb = require('mongodb');
+
+
+
 //Login System
-//var passport = require('passport')
+var passport = require('passport')
 //var LocalStrategy = require("passport-local").Strategy;
+const initializePassport = require('./passport-config')
+initializePassport(passport, email => {
+    //Todo: Datenbank verbindung herstellen und nach Email Filtern.
+    // https://www.youtube.com/watch?v=-RCnNyD0L-s
+})
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-
+app.use(express.urlencoded({extended: false}))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
