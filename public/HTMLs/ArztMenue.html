@@ -27,14 +27,9 @@
 <br>
 <form>
     <div class="form-group">
-        <label for="UserSelect">Gefährdungs Auswahl</label>
-        <select class="form-control" id="UserSelect">
-            <option>Sterthaus</option>
-            <option>Busemann</option>
-            <option>Bartoshek</option>
-        </select>
-
-
+        <label for="Name">Name</label>
+        <input type="text" class="form-control" id="Name" aria-describedby="emailHelp" >
+        <small class="form-text text-muted">Nutzer der Markiert werden soll; Vollständiger Name!</small>
     </div>
     <div class="form-group">
         <label for="DatumVon">Datum Von</label>
@@ -47,9 +42,19 @@
         <input type="date" class="form-control" id="DatumBis" aria-describedby="emailHelp" >
         <small class="form-text text-muted">Datum bis zu dem fahrten als gefährdet geflaggt werden sollen</small>
     </div>
+    <div class="form-group">
+        <label for="ZeitVon">Zeit von</label>
+        <input type="time" class="form-control" id="ZeitVon" aria-describedby="emailHelp" >
+        <small class="form-text text-muted">Zeitpunkt ab dem Geflaggt werden soll.</small>
+    </div>
+    <div class="form-group">
+        <label for="ZeitBis">Zeit bis</label>
+        <input type="time" class="form-control" id="ZeitBis" aria-describedby="emailHelp" >
+        <small class="form-text text-muted">Zeitpunkt bis zu dem Geflaggt werden soll.</small>
+    </div>
 
 </form>
-<button class="btn btn-primary" type="submit">Flaggen</button>
+<button class="btn btn-primary" type="submit"onclick="markieren()">Flaggen</button>
 
 <br>
 <footer class="footer" id="sticky-footer">
@@ -69,6 +74,6 @@
 <script src="/leaflet/leaflet.js"></script>
 <script src="/jquery/jquery.js"></script>
 <script src="/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="../javascripts/Map.js"></script>
+<script src="../javascripts/ArztMenue.js"></script>
 </body>
 </html>

@@ -37,6 +37,7 @@ async function connectMongoDB() {
         app.locals.dbConnection = await mongodb.MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }); //Alte URL "mongodb://root:rootpassword@mongodbservice:27017"
         app.locals.db = await app.locals.dbConnection.db("geosoftproject");
         console.log("Using db: " + app.locals.db.databaseName);
+        app.set("db", app.locals.db);
     }
     catch (error) {
         console.dir(error)
@@ -50,6 +51,7 @@ connectMongoDB()
         //Todo: Fertigstellen
 //    }
 //))
+
 
 
 module.exports = app;

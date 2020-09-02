@@ -11,7 +11,7 @@ var markers = L.markerClusterGroup();
 /**
  * Ruft die Daten von 'Here' ab.
  */
-function requestData(Start, Anzahl) {
+function requestData(Start) {
     var resource = "https://transit.hereapi.com/v8/departures"
 
     $.ajax(   // request url
@@ -75,12 +75,20 @@ function preProcessData() {
 function getAbfahrten(i) {
     var res = [];
     for (var j = 0; j < hereData.boards[i].departures.length; j++) {
+        var oldDate = hereData.boards[i].departures[j].time.split("");
+        console.log(oldDate)
+        var date = oldDate[8] + oldDate[9] + "." + oldDate[5] + oldDate[6] + "." +oldDate[0] + oldDate[1] + oldDate[2] + oldDate[3]
+        var Zeit = oldDate[11] + oldDate[12] + ":" + oldDate[14] + oldDate[15]
         res[j] = {
-            Zeit: hereData.boards[i].departures[j].time,
+            Datum: date,
+            Zeit: Zeit,
             Typ: hereData.boards[i].departures[j].transport.mode,
             Name: hereData.boards[i].departures[j].transport.name,
             headsign: hereData.boards[i].departures[j].transport.headsign,
-            subid: j
+            subid: j,
+            Nutzer: "Null",
+            Geflaggt: false,
+            UniqueID: date+Zeit+hereData.boards[i].place.location.lat+hereData.boards[i].place.location.lng+hereData.boards[i].departures[j].transport.name
         }
     }
     return res;
@@ -90,7 +98,7 @@ function getAbfahrten(i) {
  * Visualisiert  die  aufbereiteten daten in der Seite
  */
 function printData() {
-    var TableElem = ["Zeit", "Typ", "Name", "Headsign", "Haltestelle",  "Fahrtnummer"]
+    var TableElem = ["Datum","Zeit", "Typ", "Name", "Headsign", "Haltestelle",  "Fahrtnummer"]
     document.getElementById("tab").innerHTML = "";
     var table = document.createElement("table");
     var thead = document.createElement("thead");
@@ -107,6 +115,10 @@ function printData() {
 
         for (var j = 0; j < processedData[i].Abfahrten.length; j++) {
             var row = document.createElement("tr")
+
+            var cell = document.createElement('td')
+            cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].Datum))
+            row.appendChild(cell);
 
             var cell = document.createElement('td')
             cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].Zeit))
@@ -258,4 +270,25 @@ function reverseGeocoding(lat, lng) {
                 console.log("Fehlschlag")
             }
         });
+}
+function setData(){
+    var selector = document.getElementById("Anzahl").value;
+    var selectorArray = selector.split(""); //Todo: Typsicherung
+    for(var i = 0; i < processedData.length; i++){
+        if(processedData[i].id == selectorArray[0]){
+           for(var j = 0; j < processedData[i].Abfahrten.length; j++){
+               if(processedData[i].Abfahrten[j].subid == selectorArray[1]){
+                   console.log(processedData[i].Abfahrten[j])
+                   $.ajax({
+                       type: "POST",
+                       url: "/setFahrten",
+                       data: processedData[i].Abfahrten[j],
+                       dataType: "JSON"
+                   })
+               }
+           }
+        }
+    }
+
+
 }

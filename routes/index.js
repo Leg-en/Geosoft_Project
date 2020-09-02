@@ -3,6 +3,7 @@ var router = express.Router();
 const path = require('path');
 var publicdir = path.normalize(path.normalize(__dirname+"/..")+"/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -34,9 +35,16 @@ router.get('/Login', function(req, res, next) {
 //Müsste eine Fahrt entgegennehmen und speichern
 router.post("/setFahrten", (req, res)=>{
   //Todo: Evtl daten erst verifizieren bevor ich sie in die Datenbank packe
-  app.locals.db.collection("fahrten").insertOne(req.body);
+  var db = req.app.get("db");
+  db.collection("fahrten").insertOne(req.body);
   res.send({status: 'SUCCESS'});
+
 });
+router.post("/markieren", (req, res) => {
+  
+})
+
+
 //Sendet Fahrt zurück
 //Todo: Fahrt Filtern
 router.get("/getFahrten", (req, res)=>{
