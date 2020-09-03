@@ -3,6 +3,7 @@ var router = express.Router();
 const path = require('path');
 const bcrypt = require('bcrypt')
 var publicdir = path.normalize(path.normalize(__dirname + "/..") + "/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
+var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/views");  //Zugriff auf Views
 
 
 /* GET home page. */

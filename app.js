@@ -37,6 +37,9 @@ app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist')
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
 app.use('/markercluster', express.static(__dirname + '/node_modules/leaflet.markercluster/dist'));
+//Wir nutzen ejs
+app.set('view-engine', 'ejs')
+
 
 //Datenbank
 async function connectMongoDB() {
