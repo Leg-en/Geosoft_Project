@@ -3,34 +3,51 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongodb = require('mongodb');
+const flash = require("express-flash")
+const session = require("express-session")
+let ejs = require('ejs');
+var app = express();
+var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
 
 
 
 //Login System
 var passport = require('passport')
-//var LocalStrategy = require("passport-local").Strategy;
-const initializePassport = require('./passport-config')
-initializePassport(passport, email => {
-    //Todo: Datenbank verbindung herstellen und nach Email Filtern.
-    // https://www.youtube.com/watch?v=-RCnNyD0L-s
-})
 
+const initializePassport = require('./passport-config')
+
+
+connectMongoDB()
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var app = express();
+
+app.set('view-engine', ejs)
 app.use(express.urlencoded({extended: false}))
+
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 //Für  Login
-//app.use(passport.initialize());
-//app.use(passport.session());
+app.use(flash())
+app.use(session({
+    secret: "Test", //Todo: Ändern
+    resave: false,
+    saveUninitialized: false,
+}))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser);
+
+
+app.use(passport.initialize())
+app.use(passport.session());
+
+
 
 //Bibs Verfügbar machen
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
@@ -38,7 +55,24 @@ app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
 app.use('/markercluster', express.static(__dirname + '/node_modules/leaflet.markercluster/dist'));
 //Wir nutzen ejs
-app.set('view-engine', 'ejs')
+
+//Todo: Evtl löschen
+
+
+
+initializePassport(
+    passport,
+    async email =>  {
+        var user  = await app.locals.db.collection("nutzer").find({Email: email}).toArray();
+        return user[0]
+    },
+    async id=> {
+        console.log("Huhu")
+        var user  = await app.locals.db.collection("nutzer").find({_id: new  mongodb.ObjectID(id)}).toArray();
+        console.log(user)
+        return user[0]
+    }
+)
 
 
 //Datenbank
@@ -55,13 +89,16 @@ async function connectMongoDB() {
         setTimeout(connectMongoDB(), 3000)
     }
 }
-connectMongoDB()
 
-//passport.use(new LocalStrategy(
-//    function (username, password, done){
-        //Todo: Fertigstellen
-//    }
-//))
+
+
+
+//Keine Ahnung wie man das sonst machen soll
+app.post("/Login", passport.authenticate('local', {
+    successRedirect: '/Startseite',
+    failureRedirect: '/Login',
+    failureFlash: true
+}))
 
 
 

@@ -3,42 +3,44 @@ var router = express.Router();
 const path = require('path');
 const bcrypt = require('bcrypt')
 var publicdir = path.normalize(path.normalize(__dirname + "/..") + "/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
-var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/views");  //Zugriff auf Views
+var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Zugriff auf Views
+
+
+
 
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
-router.get('/Startseite', function (req, res, next) {
-    res.sendFile(publicdir + '/Startseite.html');
+router.get('/Startseite', checkAuthenticated, function (req, res, next) {
+    res.render(viewdir + '/Startseite.ejs',  {name: req.user.name});
 });
 router.get('/fahrt', function (req, res, next) {
     res.sendFile(publicdir + '/FahrtTaetigen.html');
 });
 router.get('/fahrtdef', function (req, res, next) {
-    res.sendFile(publicdir + '/FahrtTaetigenSimple.html');
+    res.render(viewdir + '/FahrtTaetigen.ejs');
 });
 router.get('/GetaetigteFahrten', function (req, res, next) {
-    res.sendFile(publicdir + '/GetaetigteFahrten.html');
+    res.render(viewdir + '/GetaetigteFahrten.ejs');
 });
 //Todo: Rollen Abhängigkeit Hinzufügen
 router.get('/Arzt', function (req, res, next) {
-    res.sendFile(publicdir + '/ArztMenue.html');
+    res.render(viewdir + '/ArztMenue.ejs');
 });
 router.get('/Registrierung', function (req, res, next) {
-    res.sendFile(publicdir + '/Registrierung.html');
+    res.render(viewdir + '/Registrierung.ejs');
 });
 router.get('/Login', function (req, res, next) {
-    res.sendFile(publicdir + '/Login.html');
+    res.render(viewdir + '/Login.ejs');
 });
 //User System
 router.get("/register", (req, res) => {
 
 })
-router.post("/login", (req, res) => {
 
-})
+
 router.post("/register", async (req, res) => {
     try {
         hashedpassword = await bcrypt.hash(req.body.Password, 10);
@@ -48,16 +50,15 @@ router.post("/register", async (req, res) => {
             Email: req.body.Email,
             password: hashedpassword
         })
-        console.log(hashedpassword)
         res.redirect("/Login")
     } catch (e) {
         console.log(e)
     }
 
 })
-router.get("/login", (req, res) => {
 
-})
+
+
 
 
 //Datenbakrouten
@@ -74,6 +75,7 @@ router.post("/markieren", (req, res) => {
 })
 
 
+
 //Sendet Fahrt zurück
 //Todo: Fahrt Filtern
 router.get("/getFahrten", (req, res) => {
@@ -84,3 +86,18 @@ router.get("/getFahrten", (req, res) => {
 })
 
 module.exports = router;
+
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect('/Login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+    next()
+}

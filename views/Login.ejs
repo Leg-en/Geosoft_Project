@@ -14,7 +14,7 @@
 <!-- Keine Navbar im Register-->
 <!-- Navbar ende-->
 
-<body class="bg-white" onload="fadeIn()">
+<body class="bg-white">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -32,21 +32,21 @@
     </div>
 </nav>
 <h1 class="display-4">Login</h1><br>
-<form action="/login" method="post">
+<form action="/Login" method="POST">
     <div class="form-group">
-        <label for="Username">Username</label>
-        <input type="text" class="form-control" id="Username" aria-describedby="emailHelp">
-        <small class="form-text text-muted">Username</small>
+        <label for="email">Email</label>
+        <input class="form-control" type="email" id="email" name="email" required>
     </div>
     </div>
     <div class="form-group">
-        <label for="Password">Passwort</label>
-        <input type="password" class="form-control" id="Password" aria-describedby="emailHelp">
-        <small class="form-text text-muted">Passwort</small>
+        <label for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" required>
     </div>
 
-    <button class="btn btn-primary" type="Login">Login</button>
+    <button class="btn btn-primary" type="submit">Login</button>
 </form>
+
+
 <form action="/Registrierung">
-    <input type="submit" class="btn btn-primary" value="Registrieren" />
+    <input type="submit" class="btn btn-primary" value="Registrieren"/>
 </form>
