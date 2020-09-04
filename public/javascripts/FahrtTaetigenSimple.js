@@ -86,9 +86,9 @@ function getAbfahrten(i) {
             Name: hereData.boards[i].departures[j].transport.name,
             headsign: hereData.boards[i].departures[j].transport.headsign,
             subid: j,
-            Nutzer: "Null",
+            //Nutzer: "Null",
             Geflaggt: false,
-            UniqueID: date+Zeit+hereData.boards[i].place.location.lat+hereData.boards[i].place.location.lng+hereData.boards[i].departures[j].transport.name
+            //UniqueID: date+Zeit+hereData.boards[i].place.location.lat+hereData.boards[i].place.location.lng+hereData.boards[i].departures[j].transport.name
         }
     }
     return res;

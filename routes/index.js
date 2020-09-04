@@ -96,13 +96,19 @@ router.post("/Login", passport.authenticate('local', {
 
 //Datenbakrouten
 //Müsste eine Fahrt entgegennehmen und speichern
-router.post("/setFahrten", (req, res) => {
-    //Todo: Evtl daten erst verifizieren bevor ich sie in die Datenbank packe
-    var db = req.app.get("db");
-    db.collection("fahrten").insertOne(req.body);
-    res.send({status: 'SUCCESS'});
-
-});
+router.post("/setFahrten",checkAuthenticated, async (req, res) => {
+    try {
+        //Todo: Evtl daten erst verifizieren bevor ich sie in die Datenbank packe
+        var Nutzer = await req.user;
+        var db = req.app.get("db");
+        var data = req.body;
+        data.NutzerID = Nutzer._id;
+        db.collection("fahrten").insertOne(data);
+        res.send({status: 'SUCCESS'});
+    } catch (e) {
+        console.log(e)
+    }
+})
 router.post("/markieren", (req, res) => {
 
 })
