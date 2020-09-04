@@ -6,7 +6,7 @@ const path = require('path');
 const bcrypt = require('bcrypt')
 var publicdir = path.normalize(path.normalize(__dirname + "/..") + "/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
 var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Zugriff auf Views
-
+const mongodb = require('mongodb');
 
 
 
@@ -94,7 +94,8 @@ router.post("/register", checkNotAuthenticated, async (req, res) => {
             Name: req.body.Username,
             Email: req.body.Email,
             password: hashedpassword,
-            Arzt: Arzt
+            Arzt: Arzt,
+            Fahrten: []
         })
         res.redirect("/Login")
     } catch (e) {
@@ -122,32 +123,49 @@ router.post("/Login", passport.authenticate('local', {
 router.post("/setFahrten",checkAuthenticated, async (req, res) => {
     try {
         //Todo: Evtl daten erst verifizieren bevor ich sie in die Datenbank packe
+        //Fahrt  in die Fahrtdatenbank packen
         var Nutzer = await req.user;
         var db = req.app.get("db");
         var data = req.body;
-        data.NutzerID = Nutzer._id;
         db.collection("fahrten").insertOne(data);
+
+        //In der Nutzer Datenbank  dem Nutzer die Fahrt  Hinzufügen
+        var user = await req.user;
+        var Nutzer = await db.collection("nutzer").find({_id: new mongodb.ObjectID(user._id)}).toArray();
+        Nutzer[0].Fahrten.push(data._id)
+        db.collection("nutzer").updateOne({_id:  user._id},{$set:  {Fahrten: Nutzer[0].Fahrten}})
+
+
+
         res.send({status: 'SUCCESS'});
     } catch (e) {
         console.log(e)
     }
 })
-router.post("/Markieren",  (req, res) => {
-    console.log(req.body)
-    //var db = req.app.get("db");
-    //db.collection("nutz")
+router.post("/Markieren",  async (req, res) => {
+
+    var db = req.app.get("db");
+    var user = await req.user;
+    var Nutzer = await db.collection("nutzer").find({_id: new mongodb.ObjectID(user._id)}).toArray();
+
 })
 
 
 
 //Sendet Fahrt zurück
 //Todo: Fahrt Filtern
-router.get("/getFahrten", (req, res) => {
+router.get("/getFahrten", async (req, res) => {
     var db = req.app.get("db");
-    db.collection("fahrten").find({}).toArray((mongoError, result) => {
-        if (mongoError) throw mongoError;
-        res.json(result);
-    });
+    var db = req.app.get("db");
+    var user = await req.user;
+    var Fahrten = [];
+    var Nutzer = await db.collection("nutzer").find({_id: new mongodb.ObjectID(user._id)}).toArray();
+    for(var i = 0; i<Nutzer[0].Fahrten.length; i++){
+        var data = await db.collection("fahrten").find({_id: Nutzer[0].Fahrten[i]}).toArray();
+        Fahrten.push(data[0]);
+    }
+    var result =  {Fahrten: Fahrten};
+    res.json(result);
 })
 
 

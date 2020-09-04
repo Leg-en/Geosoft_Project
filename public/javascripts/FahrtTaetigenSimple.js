@@ -88,7 +88,10 @@ function getAbfahrten(i) {
             subid: j,
             Nutzer: [],
             Geflaggt: false,
-            UniqueID: date+Zeit+hereData.boards[i].place.location.lat+hereData.boards[i].place.location.lng+hereData.boards[i].departures[j].transport.name
+            UniqueID: date+Zeit+hereData.boards[i].place.location.lat+hereData.boards[i].place.location.lng+hereData.boards[i].departures[j].transport.name,
+            Haltestellenname: hereData.boards[i].place.name, //Benötigt für Interne Zwecke
+            Koordinaten: hereData.boards[i].place.location,
+            ISODate: hereData.boards[i].departures[j].time,
         }
     }
     return res;

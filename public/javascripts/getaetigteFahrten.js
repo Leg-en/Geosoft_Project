@@ -1,6 +1,7 @@
 getData()
-function display(processedData){
-    var TableElem = ["Zeit", "Typ", "Name", "Headsign", "Haltestelle",  "Fahrtnummer", "Gefährdet"]
+//Todo: Karte Hinzufügem
+function display(processedData) {
+    var TableElem = ["Datum", "Zeit", "Typ", "Name", "Headsign", "Haltestelle"]
     document.getElementById("tab").innerHTML = "";
     var table = document.createElement("table");
     var thead = document.createElement("thead");
@@ -14,36 +15,34 @@ function display(processedData){
     thead.appendChild(row);
 
     for (var i = 0; i < processedData.length; i++) {
+        var row = document.createElement("tr")
 
-        for (var j = 0; j < processedData[i].Abfahrten.length; j++) {
-            var row = document.createElement("tr")
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Datum))
+        row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].Zeit))
-            row.appendChild(cell);
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Zeit))
+        row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].Typ))
-            row.appendChild(cell);
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Typ))
+        row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].Name))
-            row.appendChild(cell);
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Name))
+        row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode(processedData[i].Abfahrten[j].headsign))
-            row.appendChild(cell);
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].headsign))
+        row.appendChild(cell);
+        //Todo: Evtl wieder Haltestelle ergänzen?
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Haltestellenname))
+        row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode(processedData[i].Name))
-            row.appendChild(cell);
 
-            var cell = document.createElement('td')
-            cell.appendChild(document.createTextNode("" + processedData[i].id + processedData[i].Abfahrten[j].subid))
-            row.appendChild(cell);
-
-            tbody.appendChild(row);
-        }
+        tbody.appendChild(row);
 
 
     }
@@ -57,10 +56,20 @@ function display(processedData){
     table.classList.add("table-hover")
     table.id = "tableid";
 
-
+    document.getElementById("tab").appendChild(table);
 }
 
-function getData(){
-    display()
-}
+function getData() {
+    $.ajax(   // request url
+        {
+            url: "/getFahrten",
+            success: function (data, status, xhr) {// success callback function
+                console.log(data.Fahrten);
+                display(data.Fahrten)
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback
+                console.log("Fehlschlag")
+            }
+        });
 
+}

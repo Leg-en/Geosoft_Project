@@ -11,4 +11,3 @@ $(function() {
     });
 });
 
-console.log(role)
