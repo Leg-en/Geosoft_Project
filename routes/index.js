@@ -134,6 +134,8 @@ router.post("/setFahrten",checkAuthenticated, async (req, res) => {
 })
 router.post("/Markieren",  (req, res) => {
     console.log(req.body)
+    //var db = req.app.get("db");
+    //db.collection("nutz")
 })
 
 

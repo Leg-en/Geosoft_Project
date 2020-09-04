@@ -23,7 +23,7 @@ connectMongoDB()
 
 
 
-app.set('view-engine', ejs)
+app.set('view engine', "ejs")
 app.use(express.urlencoded({extended: false}))
 
 app.use(logger('dev'));
