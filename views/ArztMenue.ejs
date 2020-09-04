@@ -11,7 +11,8 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -19,43 +20,54 @@
             <a class="nav-item nav-link" href="Startseite">Startseite</a>
             <a class="nav-item nav-link" href="fahrtdef">Fahrt Tätigen</a>
             <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten</a>
-            <a class="nav-item nav-link active" href="Arzt">Arzt Menü<span class="sr-only">(current)</span></a>
+            <% if (Role) { %>
+                <a class="nav-item nav-link active" href="Arzt"> <%= Role %></a>
+            <% } %>
             <a class="nav-item nav-link" href="#" id="logout">Logout</a>
         </div>
     </div>
 </nav>
 
 <br>
-<form>
-    <div class="form-group">
-        <label for="Name">Name</label>
-        <input type="text" class="form-control" id="Name" aria-describedby="emailHelp" >
-        <small class="form-text text-muted">Nutzer der Markiert werden soll; Vollständiger Name!</small>
-    </div>
-    <div class="form-group">
-        <label for="DatumVon">Datum Von</label>
-        <input type="date" class="form-control" id="DatumVon" aria-describedby="emailHelp" >
-        <small class="form-text text-muted">Datum von dem an fahrten als gefährdet Geflaggt werden sollen</small>
-    </div>
 
-    <div class="form-group">
-        <label for="DatumBis">Datum Bis</label>
-        <input type="date" class="form-control" id="DatumBis" aria-describedby="emailHelp" >
-        <small class="form-text text-muted">Datum bis zu dem fahrten als gefährdet geflaggt werden sollen</small>
-    </div>
-    <div class="form-group">
-        <label for="ZeitVon">Zeit von</label>
-        <input type="time" class="form-control" id="ZeitVon" aria-describedby="emailHelp" >
-        <small class="form-text text-muted">Zeitpunkt ab dem Geflaggt werden soll.</small>
-    </div>
-    <div class="form-group">
-        <label for="ZeitBis">Zeit bis</label>
-        <input type="time" class="form-control" id="ZeitBis" aria-describedby="emailHelp" >
-        <small class="form-text text-muted">Zeitpunkt bis zu dem Geflaggt werden soll.</small>
-    </div>
+<% if (User){ %>
 
-</form>
-<button class="btn btn-primary" type="submit"onclick="markieren()">Flaggen</button>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Example select</label>
+            <select class="form-control" id="Name">
+                <% for(var i = 0; i < User.length; i++){ %>
+                <option value="<%= User[i]._id %>"><%= User[i].Name %></option>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="DatumVon">Datum Von</label>
+            <input type="date" class="form-control" id="DatumVon" aria-describedby="emailHelp">
+            <small class="form-text text-muted">Datum von dem an fahrten als gefährdet Geflaggt werden sollen</small>
+        </div>
+
+        <div class="form-group">
+            <label for="DatumBis">Datum Bis</label>
+            <input type="date" class="form-control" id="DatumBis" aria-describedby="emailHelp">
+            <small class="form-text text-muted">Datum bis zu dem fahrten als gefährdet geflaggt werden sollen</small>
+        </div>
+        <div class="form-group">
+            <label for="ZeitVon">Zeit von</label>
+            <input type="time" class="form-control" id="ZeitVon" aria-describedby="emailHelp">
+            <small class="form-text text-muted">Zeitpunkt ab dem Geflaggt werden soll.</small>
+        </div>
+        <div class="form-group">
+            <label for="ZeitBis">Zeit bis</label>
+            <input type="time" class="form-control" id="ZeitBis" aria-describedby="emailHelp">
+            <small class="form-text text-muted">Zeitpunkt bis zu dem Geflaggt werden soll.</small>
+        </div>
+        <button class="btn btn-primary" type=""onclick="markieren()">Flaggen</button>
+
+
+<% }else{ %>
+    <h1 class="display-1">Keine Nutzer da :(</h1>
+<% } %>
 
 <br>
 <footer class="footer" id="sticky-footer">
@@ -67,11 +79,6 @@
         </span>
     </div>
 </footer>
-
-
-
-
-
 
 
 <script src="/leaflet/leaflet.js"></script>

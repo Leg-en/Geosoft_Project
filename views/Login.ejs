@@ -31,25 +31,33 @@
         </div>
     </div>
 </nav>
+
+
 <h1 class="display-4">Login</h1><br>
-<form action="/Login" method="POST">
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input class="form-control" type="email" id="email" name="email" required>
+<% if (messages.error) { %>
+    <p><strong>
+            <center> <%= messages.error %></center>
+        </strong></p>
+<% } %>
+<div class="container mw-100">
+    <form action="/Login" method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input class="form-control" type="password" id="password" name="password" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+
+    <form action="/Registrierung">
+        <input type="submit" class="btn btn-primary" value="Registrieren"/>
+    </form>
     </div>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input class="form-control" type="password" id="password" name="password" required>
-    </div>
-
-    <button class="btn btn-primary" type="submit">Login</button>
-</form>
-
-
-<form action="/Registrierung">
-    <input type="submit" class="btn btn-primary" value="Registrieren"/>
-</form>
-
-
+</div>
 </body>

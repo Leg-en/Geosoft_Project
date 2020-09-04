@@ -6,7 +6,7 @@ function initialize(passport, getUserByEmail, getUserById) {
         const user = await getUserByEmail(email)
         if (user == null) {
             console.log("No user with that email")
-            return done(null, false, {message: 'No user with that email'})
+            return done(null, false, {message: 'Kein Konto unter dieser Email gefunden.'})
         }
 
         try {
@@ -14,7 +14,7 @@ function initialize(passport, getUserByEmail, getUserById) {
                 return done(null, user)
             } else {
                 console.log("Password incorrect")
-                return done(null, false, {message: 'Password incorrect'})
+                return done(null, false, {message: 'Falsches Passwort'})
             }
         } catch (e) {
             console.log(e)

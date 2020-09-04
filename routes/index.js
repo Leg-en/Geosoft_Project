@@ -14,23 +14,50 @@ var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Z
 
 
 /* GET home page. */
+router.get('/', checkAuthenticated, async (req, res, next) => {
+    res.redirect("/Startseite")
 
+});
 router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user;
-    res.render(viewdir + "/Startseite.ejs",  {name: Nutzer.Name});
+    if (Nutzer.Arzt){
+        res.render(viewdir + "/Startseite.ejs",  {name: Nutzer.Name, Role: "Arzt Menü"});
+    }else{
+        res.render(viewdir + "/Startseite.ejs",  {name: Nutzer.Name, Role: null});
+    }
+
 });
 router.get('/fahrt', checkAuthenticated,function (req, res, next) {
     res.sendFile(publicdir + '/FahrtTaetigen.html');
+
 });
-router.get('/fahrtdef', checkAuthenticated,function (req, res, next) {
-    res.render(viewdir + '/FahrtTaetigen.ejs');
+router.get('/fahrtdef', checkAuthenticated,async (req, res, next) =>{
+    var Nutzer = await req.user;
+    if (Nutzer.Arzt){
+        res.render(viewdir + "/FahrtTaetigen.ejs",  {name: Nutzer.Name, Role: "Arzt Menü"});
+    }else{
+        res.render(viewdir + "/FahrtTaetigen.ejs",  {name: Nutzer.Name, Role: null});
+    }
 });
-router.get('/GetaetigteFahrten', checkAuthenticated,function (req, res, next) {
-    res.render(viewdir + '/GetaetigteFahrten.ejs');
+router.get('/GetaetigteFahrten', checkAuthenticated,async (req, res, next) => {
+    var Nutzer = await req.user;
+    if (Nutzer.Arzt){
+        res.render(viewdir + "/GetaetigteFahrten.ejs",  {name: Nutzer.Name, Role: "Arzt Menü"});
+    }else{
+        res.render(viewdir + "/GetaetigteFahrten.ejs",  {name: Nutzer.Name, Role: null});
+    }
 });
 //Todo: Rollen Abhängigkeit Hinzufügen
-router.get('/Arzt', checkAuthenticated, isInRole, function (req, res, next) {
-    res.render(viewdir + '/ArztMenue.ejs');
+router.get('/Arzt', checkAuthenticated, isInRole, async (req, res, next) =>{
+    var db = req.app.get("db");
+    var Nutzer = await req.user;
+    var User = await db.collection("nutzer").find({}).toArray();
+
+    if (Nutzer.Arzt){
+        res.render(viewdir + "/ArztMenue.ejs",  {name: Nutzer.Name, Role: "Arzt Menü", User: User});
+    }else{
+        res.render(viewdir + "/Startseite.ejs",  {name: Nutzer.Name, Role: null});
+    }
 });
 router.get('/Registrierung',checkNotAuthenticated, function (req, res, next) {
     res.render(viewdir + '/Registrierung.ejs');
@@ -39,10 +66,6 @@ router.get('/Login', checkNotAuthenticated,function (req, res, next) {
     res.render(viewdir + '/Login.ejs');
 });
 //User System
-router.get("/register", (req, res) => {
-
-})
-
 
 router.post("/register", checkNotAuthenticated, async (req, res) => {
     try {
@@ -109,8 +132,8 @@ router.post("/setFahrten",checkAuthenticated, async (req, res) => {
         console.log(e)
     }
 })
-router.post("/markieren", (req, res) => {
-
+router.post("/Markieren",  (req, res) => {
+    console.log(req.body)
 })
 
 
@@ -118,7 +141,8 @@ router.post("/markieren", (req, res) => {
 //Sendet Fahrt zurück
 //Todo: Fahrt Filtern
 router.get("/getFahrten", (req, res) => {
-    app.locals.db.collection("fahrten").find({}).toArray((mongoError, result) => {
+    var db = req.app.get("db");
+    db.collection("fahrten").find({}).toArray((mongoError, result) => {
         if (mongoError) throw mongoError;
         res.json(result);
     });

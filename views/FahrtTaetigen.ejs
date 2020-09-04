@@ -23,7 +23,9 @@
             <a class="nav-item nav-link active" href="fahrtdef">Fahrt Tätigen<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten<span
                         class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="Arzt">Arzt Menü</a>
+            <% if (Role) { %>
+                <a class="nav-item nav-link" href="Arzt"> <%= Role %></a>
+            <% } %>
             <a class="nav-item nav-link" href="#" id="logout">Logout</a>
         </div>
     </div>
