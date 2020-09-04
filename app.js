@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongodb = require('mongodb');
 const flash = require("express-flash")
@@ -9,6 +8,8 @@ let ejs = require('ejs');
 var app = express();
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
+const methodOverride = require('method-override')
+
 
 
 
@@ -19,8 +20,7 @@ const initializePassport = require('./passport-config')
 
 
 connectMongoDB()
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+
 
 
 app.set('view-engine', ejs)
@@ -31,21 +31,30 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+
+
 //Für  Login
 app.use(flash())
+app.set('trust proxy', 1) // trust first proxy
 app.use(session({
-    secret: "Test", //Todo: Ändern
+    secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
+    cookie: {}
 }))
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser);
+app.use(methodOverride('_method'))
+//Todo: Evtl Löschen
+app.use(express.static("public"));
 
 
 app.use(passport.initialize())
 app.use(passport.session());
+
+
+
+
 
 
 
@@ -67,12 +76,14 @@ initializePassport(
         return user[0]
     },
     async id=> {
-        console.log("Huhu")
         var user  = await app.locals.db.collection("nutzer").find({_id: new  mongodb.ObjectID(id)}).toArray();
-        console.log(user)
         return user[0]
     }
 )
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
 
 //Datenbank
@@ -95,8 +106,8 @@ async function connectMongoDB() {
 
 //Keine Ahnung wie man das sonst machen soll
 app.post("/Login", passport.authenticate('local', {
-    successRedirect: '/Startseite',
-    failureRedirect: '/Login',
+    successRedirect: '/Arzt',
+    failureRedirect: '/GetaetigteFahrten',
     failureFlash: true
 }))
 

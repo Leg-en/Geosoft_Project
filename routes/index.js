@@ -1,9 +1,14 @@
+
 var express = require('express');
 var router = express.Router();
+var passport = require('passport');
+const methodOverride = require('method-override')
 const path = require('path');
 const bcrypt = require('bcrypt')
 var publicdir = path.normalize(path.normalize(__dirname + "/..") + "/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
 var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Zugriff auf Views
+
+
 
 
 
@@ -14,25 +19,25 @@ router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
 router.get('/Startseite', checkAuthenticated, function (req, res, next) {
-    res.render(viewdir + '/Startseite.ejs',  {name: req.user.name});
+    res.render(viewdir + "/Startseite.ejs",  {name: "Huhu"});
 });
-router.get('/fahrt', function (req, res, next) {
+router.get('/fahrt', checkAuthenticated,function (req, res, next) {
     res.sendFile(publicdir + '/FahrtTaetigen.html');
 });
-router.get('/fahrtdef', function (req, res, next) {
+router.get('/fahrtdef', checkAuthenticated,function (req, res, next) {
     res.render(viewdir + '/FahrtTaetigen.ejs');
 });
-router.get('/GetaetigteFahrten', function (req, res, next) {
+router.get('/GetaetigteFahrten', checkAuthenticated,function (req, res, next) {
     res.render(viewdir + '/GetaetigteFahrten.ejs');
 });
 //Todo: Rollen Abhängigkeit Hinzufügen
-router.get('/Arzt', function (req, res, next) {
+router.get('/Arzt', checkAuthenticated,function (req, res, next) {
     res.render(viewdir + '/ArztMenue.ejs');
 });
-router.get('/Registrierung', function (req, res, next) {
+router.get('/Registrierung',checkNotAuthenticated, function (req, res, next) {
     res.render(viewdir + '/Registrierung.ejs');
 });
-router.get('/Login', function (req, res, next) {
+router.get('/Login', checkNotAuthenticated,function (req, res, next) {
     res.render(viewdir + '/Login.ejs');
 });
 //User System
@@ -41,7 +46,7 @@ router.get("/register", (req, res) => {
 })
 
 
-router.post("/register", async (req, res) => {
+router.post("/register", checkNotAuthenticated, async (req, res) => {
     try {
         hashedpassword = await bcrypt.hash(req.body.Password, 10);
         var db = req.app.get("db");
@@ -56,6 +61,11 @@ router.post("/register", async (req, res) => {
     }
 
 })
+
+router.delete("/logout", ((req, res) => {
+    req.logOut();
+    res.redirect("/Login")
+}))
 
 
 
@@ -85,9 +95,10 @@ router.get("/getFahrten", (req, res) => {
     });
 })
 
-module.exports = router;
+
 
 function checkAuthenticated(req, res, next) {
+    console.log(req.isAuthenticated())
     if (req.isAuthenticated()) {
         return next()
     }
@@ -97,7 +108,9 @@ function checkAuthenticated(req, res, next) {
 
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return res.redirect('/')
+        return res.redirect('/Startseite')
     }
     next()
 }
+
+module.exports = router;
