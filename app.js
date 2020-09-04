@@ -102,15 +102,4 @@ async function connectMongoDB() {
 }
 
 
-
-
-//Keine Ahnung wie man das sonst machen soll
-app.post("/Login", passport.authenticate('local', {
-    successRedirect: '/Arzt',
-    failureRedirect: '/GetaetigteFahrten',
-    failureFlash: true
-}))
-
-
-
 module.exports = app;

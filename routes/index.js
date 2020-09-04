@@ -1,4 +1,3 @@
-
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
@@ -15,11 +14,10 @@ var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Z
 
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
-});
-router.get('/Startseite', checkAuthenticated, function (req, res, next) {
-    res.render(viewdir + "/Startseite.ejs",  {name: "Huhu"});
+
+router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
+    var Nutzer = await req.user;
+    res.render(viewdir + "/Startseite.ejs",  {name: Nutzer.Name});
 });
 router.get('/fahrt', checkAuthenticated,function (req, res, next) {
     res.sendFile(publicdir + '/FahrtTaetigen.html');
@@ -31,7 +29,7 @@ router.get('/GetaetigteFahrten', checkAuthenticated,function (req, res, next) {
     res.render(viewdir + '/GetaetigteFahrten.ejs');
 });
 //Todo: Rollen Abhängigkeit Hinzufügen
-router.get('/Arzt', checkAuthenticated,function (req, res, next) {
+router.get('/Arzt', checkAuthenticated, isInRole, function (req, res, next) {
     res.render(viewdir + '/ArztMenue.ejs');
 });
 router.get('/Registrierung',checkNotAuthenticated, function (req, res, next) {
@@ -48,12 +46,32 @@ router.get("/register", (req, res) => {
 
 router.post("/register", checkNotAuthenticated, async (req, res) => {
     try {
-        hashedpassword = await bcrypt.hash(req.body.Password, 10);
         var db = req.app.get("db");
+        hashedpassword = await bcrypt.hash(req.body.Password, 10);
+
+        var exNutzer = await db.collection("nutzer").find({Email: req.body.Email}).toArray();
+
+
+        try{
+            if (req.body.Email == exNutzer[0].Email) {
+                res.redirect("/Registrierung") //Todo: Ersetzen durch Fehlermeldung
+                return;
+            }
+        }catch (e){
+            //Keine bessere Idee für ne Lösung
+        }
+
+        var Arzt = false;
+
+
+        if(req.body.Rolle == "Arzt"){
+            Arzt = true;
+        }
         db.collection("nutzer").insertOne({
             Name: req.body.Username,
             Email: req.body.Email,
-            password: hashedpassword
+            password: hashedpassword,
+            Arzt: Arzt
         })
         res.redirect("/Login")
     } catch (e) {
@@ -67,6 +85,11 @@ router.delete("/logout", ((req, res) => {
     res.redirect("/Login")
 }))
 
+router.post("/Login", passport.authenticate('local', {
+    successRedirect: '/Startseite',
+    failureRedirect: '/Login',
+    failureFlash: true
+}))
 
 
 
@@ -98,7 +121,6 @@ router.get("/getFahrten", (req, res) => {
 
 
 function checkAuthenticated(req, res, next) {
-    console.log(req.isAuthenticated())
     if (req.isAuthenticated()) {
         return next()
     }
@@ -111,6 +133,13 @@ function checkNotAuthenticated(req, res, next) {
         return res.redirect('/Startseite')
     }
     next()
+}
+async function isInRole(req, res, next){
+    var Nutzer = await req.user
+    if(!Nutzer.Arzt){
+        return res.redirect("/Startseite") //Todo: Durch Fehlermeldung Ergänzen
+    }
+    next();
 }
 
 module.exports = router;
