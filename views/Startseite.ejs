@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="../stylesheets/style.css">
+    <link href="/markercluster/MarkerCluster.css" rel="stylesheet">
+    <link href="/markercluster/MarkerCluster.Default.css" rel="stylesheet">
+
 
 </head>
-<body>
+<body onload="parseVariables()">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -38,10 +41,84 @@
         </div>
         <div class="col-lg-6">
             <h4 class="display-4">Guten Tag, <%= name %></h4>
-            <h4 class="display-4"> Kürzlich getätigte Fahrten</h4>
+
+            <%if(Fahrten){%>
+            <h4 class="display-4"> Letzte 4 Fahrten</h4>
             <!--Todo: Tabellle Hinzufügen -->
-            <h4 class="display-4"> Risiko Fahrten</h4>
+            <table class ="table">
+                <thead>
+                <tr>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Zeit</th>
+                    <th scope="col">Typ</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Headsign</th>
+                    <th scope="col">Haltestelle</th>
+                    <th scope="col">Geflaggt</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%for(var i = 0; i < Fahrten.length;i++){%>
+                    <tr>
+                    <th><%= Fahrten[i].Datum %></th>
+                    <th><%=Fahrten[i].Zeit%></th>
+                    <th><%=Fahrten[i].Typ%></th>
+                    <th><%=Fahrten[i].Name%></th>
+                    <th><%=Fahrten[i].headsign%></th>
+                    <th><%=Fahrten[i].Haltestellenname%></th>
+                    <th><%=Fahrten[i].Geflaggt%></th>
+                    </tr>
+                <%}%>
+                </tbody>
+            </table>
+            <!-- Fahrten dem JS übergeben. -->
+            <script>
+                var Fahrten = '<%- JSON.stringify(Fahrten)%>'
+            </script>
+            <%}else{%>
+                <h4 class="display-4"> Noch keine Fahrten Hinterlegt</h4>
+            <%}%>
+
             <!--Todo: Tabellle Hinzufügen -->
+            <%if(FlagFahrten){%>
+            <h4 class="display-4">Neue Risiko Fahrten</h4>
+            <!--Todo: Tabellle Hinzufügen -->
+            <table class ="table">
+                <thead>
+                <tr>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Zeit</th>
+                    <th scope="col">Typ</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Headsign</th>
+                    <th scope="col">Haltestelle</th>
+                    <th scope="col">Geflaggt</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%for(var i = 0; i < FlagFahrten.length;i++){%>
+                    <tr>
+                <th><%= FlagFahrten[i].Datum %></th>
+                <th><%=FlagFahrten[i].Zeit%></th>
+                <th><%=FlagFahrten[i].Typ%></th>
+                <th><%=FlagFahrten[i].Name%></th>
+                <th><%=FlagFahrten[i].headsign%></th>
+                <th><%=FlagFahrten[i].Haltestellenname%></th>
+                <th><%=FlagFahrten[i].Geflaggt%></th>
+                    </tr>
+                <%}%>
+                </tbody>
+            </table>
+            <!-- Flagfahrten dem JS übergeben. -->
+            <script>
+                var FlagFahrten =  '<%- JSON.stringify(FlagFahrten)%>'
+            </script>
+            <%}else{%>
+                <h4 class="display-4"> Keine neu Geflaggten Fahrten</h4>
+            <%}%>
+
+
+
         </div>
     </div>
 </div>
@@ -61,7 +138,9 @@
 <script type="text/javascript" src="/leaflet/leaflet.js"></script>
 <script type="text/javascript" src="/jquery/jquery.js"></script>
 <script type="text/javascript" src="/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="/markercluster/leaflet.markercluster.js"></script>
 <script type="text/javascript" src="../javascripts/Map.js"></script>
 <script type="text/javascript" src="../javascripts/LogInAndOut.js"></script>
+<script type="text/javascript" src="../javascripts/Startseite.js"></script>
 </body>
 </html>

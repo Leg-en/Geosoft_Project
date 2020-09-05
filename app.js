@@ -14,6 +14,7 @@ const methodOverride = require('method-override')
 
 
 
+
 //Login System
 var passport = require('passport') //Passport für Login benötigt
 const initializePassport = require('./passport-config') //Passport Konfiguration

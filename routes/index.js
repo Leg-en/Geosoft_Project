@@ -8,6 +8,17 @@ const bcrypt = require('bcrypt')
 var publicdir = path.normalize(path.normalize(__dirname + "/..") + "/public/HTMLs"); //Erlaubt probemlosen zugriff auf den Public Ordner
 var viewdir = path.normalize(path.normalize(__dirname + "/..") + "/Views");  //Zugriff auf Views
 const mongodb = require('mongodb');
+const nodemailer = require("nodemailer"); //Wird verwendet für Email versenden
+const mailTransporter = nodemailer.createTransport({
+    host: 'smtp.web.de',
+    port: 587,
+    secure: false,
+    auth: {
+        user: 'CoronaWarnseiteWWU@web.de',
+        pass: 'WWUCorona'
+    }
+});
+
 
 
 //Quelle  für dates: https://stackoverflow.com/questions/492994/compare-two-dates-with-javascript
@@ -68,15 +79,39 @@ var dates = {
 //Check Authenticated überprüft ob user Authenthifiziert ist
 router.get('/', checkAuthenticated, async (req, res, next) => {
     res.redirect("/Startseite") //Redirect auf Startseite für einfachen aufruf auf Server. User wird im Folgenden wahrscheinlich auf Login redirected
-
 });
 router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user; //Nutzer Daten Holen
+    var FlagFahrten = [];
+    var db = req.app.get("db");
+    if(Nutzer.recentFlagged.length > 0){
+        for (var i = 0; i<Nutzer.recentFlagged.length;i++){
+            var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.recentFlagged[i])}).toArray();
+            FlagFahrten.push(fahrt[0])
+        }
+    }else {
+        FlagFahrten = null;
+    }
+    console.log(Nutzer);
+    var Fahrten = [];
+    //Es waren mal 5 geplant. Aber irgendwie ist das Frontend damit überfordert
+    //Todo: Daten über Ajax request Anfordern. Das ist wenigstens Stabil
+    for (var i = 0; i <Nutzer.Fahrten.length && i < 4; i++){
+        var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.Fahrten[i])}).toArray();
+        Fahrten.push(fahrt[0])
+    }
+    if (Fahrten.length == 0){
+        Fahrten = null;
+    }
+    db.collection("nutzer").updateOne({_id: Nutzer._id},{$set: {recentFlagged: []}})
+
+
+
     //Wenn Nutzer Arzt ist, zeige die Arzt seite an. Sonst nicht. Und Stellt den namen des Nutzers da
     if (Nutzer.Arzt) {
-        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: "Arzt Menü"});
+        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: "Arzt Menü", FlagFahrten: FlagFahrten, Fahrten: Fahrten});
     } else {
-        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: null});
+        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: null, FlagFahrten: FlagFahrten, Fahrten: Fahrten});
     }
 
 });
@@ -155,6 +190,7 @@ router.post("/register", checkNotAuthenticated, async (req, res) => {
             Fahrten: [], //Fahrten Array ist noch Leer. Nutzer kann offensichtlicherweise noch keine Fahrten gemacht haben.
             RecentFlags: false,
             recentFlagged: [],
+            flags: [],
         })
         //Nach Erfolgreicher Registierung auf Login redirecten
         res.redirect("/Login")
@@ -219,7 +255,6 @@ router.post("/setFahrten", checkAuthenticated, async (req, res) => {
 
 //Todo: Nach Zeit Filtern
 router.post("/Markieren", async (req, res) => {
-
     var db = req.app.get("db");
     var user = req.body;
     //var date = new Date(user.ISOdateVon);
@@ -227,22 +262,49 @@ router.post("/Markieren", async (req, res) => {
     //Alle Fahrten des Nutzers Durchgehen
     for (var i = 0; i < Nutzer[0].Fahrten.length; i++) {
         var Fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer[0].Fahrten[i])}).toArray()
-        if (!Fahrt.Geflaggt) {
-            db.collection("fahrten").updateOne({_id: new mongodb.ObjectID(Fahrt[0]._id)}, {$set: {Geflaggt: true}})
+        //Zeitüberprüfung
+        var dateVon = new Date(req.body.ISOdateVon)
+        var dateBis = new Date(req.body.ISOdateBis)
+        if(dates.compare(dateVon, dateBis) != -1){
+            console.log("Datum falsch rum")
+            return;
+        }
+        if(dates.inRange(new Date(Fahrt[0].ISODate), dateVon, dateBis)){
+            if (!Fahrt.Geflaggt) {
+                db.collection("fahrten").updateOne({_id: new mongodb.ObjectID(Fahrt[0]._id)}, {$set: {Geflaggt: true}})
+                //Todo: Nutzer Email über Flaggung Senden
+
+                //Alle Mitfahrer des Fahrtes des Nutzers durchgehen
+                for (var j = 0; j < Fahrt[0].Nutzer.length; j++) {
+                    var nutzerFlag = await db.collection("nutzer").find({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}).toArray()
+                    nutzerFlag[0].recentFlagged.push((Fahrt[0]._id))
+                    nutzerFlag[0].flags.push((Fahrt[0]._id))
+                    await db.collection("nutzer").updateOne({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}, {
+                        $set: {
+                            RecentFlags: true,
+                            recentFlagged: nutzerFlag[0].recentFlagged,
+                            flags: nutzerFlag[0].flags,
+                        }
+                    })
+
+                    //Um hier fehler zu Vermeiden währe evtl. eine Verifizierung der Email Sinnvoll.
+                    try{
+                        let info = mailTransporter.sendMail({
+                            from: 'CoronaWarnseiteWWU@web.de', // sender address
+                            to: nutzerFlag[0].Email, // list of receivers
+                            subject: "CoronaWarnTrackingWWU", // Subject line
+                            html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name +" am " + Fahrt[0].Datum + "." // html body
+                        })
+                    }catch (e){
+                        console.log(e)
+                    }
+
+                }
+            }
         }
 
-        //Todo: Nutzer Email über Flaggung Senden
-        //Alle Mitfahrer des Fahrtes des Nutzers durchgehen
-        for (var j = 0; j < Fahrt[0].Nutzer.length; j++) {
-            var nutzerFlag = await db.collection("nutzer").find({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}).toArray()
-            nutzerFlag[0].recentFlagged.push((Fahrt[0]._id))
-            await db.collection("nutzer").updateOne({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}, {
-                $set: {
-                    RecentFlags: true,
-                    recentFlagged: nutzerFlag[0].recentFlagged
-                }
-            })
-        }
+
+
     }
 
 
