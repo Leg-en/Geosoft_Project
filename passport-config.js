@@ -1,6 +1,13 @@
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
 
+/**
+ * Initialize Funktion für Passport.
+ * Passport Code kommt größtenteils aus der Dokumentation oder hierher: https://github.com/WebDevSimplified/Nodejs-Passport-Login
+ * @param passport
+ * @param getUserByEmail
+ * @param getUserById
+ */
 function initialize(passport, getUserByEmail, getUserById) {
     const authenticateUser = async (email, password, done) => {
         const user = await getUserByEmail(email)

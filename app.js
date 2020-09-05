@@ -1,3 +1,4 @@
+//Vorbereitende Imports und Festlegungen
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -14,18 +15,17 @@ const methodOverride = require('method-override')
 
 
 //Login System
-var passport = require('passport')
-
-const initializePassport = require('./passport-config')
-
-
-connectMongoDB()
+var passport = require('passport') //Passport für Login benötigt
+const initializePassport = require('./passport-config') //Passport Konfiguration
 
 
+connectMongoDB() //Mongodb Verbindung herstellen
 
-app.set('view engine', "ejs")
+
+
+app.set('view engine', "ejs") //Wir verwenden ejs als View Engine. Templates nutzen wir der einfachheit halber nicht.
+//Sonst noch nötigte Festlegungen, teils benötigt für Passport
 app.use(express.urlencoded({extended: false}))
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
@@ -38,17 +38,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash())
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
-    secret: 'keyboard cat',
+    secret: 'keyboard cat', //Todo: Anderes Secret Wählen
     resave: false,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {} //Cookies sind bei uns nicht weiter Konfiguriert.
 }))
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(methodOverride('_method'))
-//Todo: Evtl Löschen
+app.use(methodOverride('_method')) //Benötigt für Passport
 app.use(express.static("public"));
 
-
+//Passport auch benutzen und auch Session benutzen
 app.use(passport.initialize())
 app.use(passport.session());
 
@@ -63,18 +62,17 @@ app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist')
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/leaflet', express.static(__dirname + '/node_modules/leaflet/dist'));
 app.use('/markercluster', express.static(__dirname + '/node_modules/leaflet.markercluster/dist'));
-//Wir nutzen ejs
-
-//Todo: Evtl löschen
 
 
-
+//Passport Initialisieren.
 initializePassport(
     passport,
+    //Nutzer über Email bekommen
     async email =>  {
         var user  = await app.locals.db.collection("nutzer").find({Email: email}).toArray();
         return user[0]
     },
+    //Nutzer über Datenbank Bekommen
     async id=> {
         var user  = await app.locals.db.collection("nutzer").find({_id: new  mongodb.ObjectID(id)}).toArray();
         return user[0]
