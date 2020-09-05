@@ -1,7 +1,7 @@
 getData()
 //Todo: Karte Hinzufügem
 function display(processedData) {
-    var TableElem = ["Datum", "Zeit", "Typ", "Name", "Headsign", "Haltestelle"]
+    var TableElem = ["Datum", "Zeit", "Typ", "Name", "Headsign", "Haltestelle", "Geflaggt"]
     document.getElementById("tab").innerHTML = "";
     var table = document.createElement("table");
     var thead = document.createElement("thead");
@@ -39,6 +39,10 @@ function display(processedData) {
         //Todo: Evtl wieder Haltestelle ergänzen?
         var cell = document.createElement('td')
         cell.appendChild(document.createTextNode(processedData[i].Haltestellenname))
+        row.appendChild(cell);
+
+        var cell = document.createElement('td')
+        cell.appendChild(document.createTextNode(processedData[i].Geflaggt))
         row.appendChild(cell);
 
 
