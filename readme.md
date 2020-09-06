@@ -6,6 +6,6 @@
 - Im Hauptverzeichnis  Node Server  Starten `npm  start`
   - Im  Bedarfsfall  mit npm vorher  dependencys  installieren `npm install` 
 
-## Zugang zum Assoziierten Gmail Konto
+## Zugang zum Assoziierten Web de Konto
 Email: CoronaWarnseiteWWU@web.de
 Passwort: WWUCorona

@@ -32,42 +32,45 @@
 
 <% if (User){ %>
 
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Example select</label>
-            <select class="form-control" id="Name">
-                <% for(var i = 0; i < User.length; i++){ %>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Nutzer Wählen</label>
+        <select class="form-control" id="Name">
+            <% for(var i = 0; i < User.length; i++){ %>
                 <option value="<%= User[i]._id %>"><%= User[i].Name %></option>
-                <% } %>
-            </select>
-        </div>
+            <% } %>
+        </select>
+    </div>
 
-        <div class="form-group">
-            <label for="DatumVon">Datum Von</label>
-            <input type="date" class="form-control" id="DatumVon" aria-describedby="emailHelp">
-            <small class="form-text text-muted">Datum von dem an fahrten als gefährdet Geflaggt werden sollen</small>
-        </div>
+    <div class="form-group">
+        <label for="DatumVon">Datum Von</label>
+        <input type="date" class="form-control" id="DatumVon" aria-describedby="emailHelp">
+        <small class="form-text text-muted">Datum von dem an fahrten als gefährdet Geflaggt werden sollen</small>
+    </div>
 
-        <div class="form-group">
-            <label for="DatumBis">Datum Bis</label>
-            <input type="date" class="form-control" id="DatumBis" aria-describedby="emailHelp">
-            <small class="form-text text-muted">Datum bis zu dem fahrten als gefährdet geflaggt werden sollen</small>
-        </div>
-        <div class="form-group">
-            <label for="ZeitVon">Zeit von</label>
-            <input type="time" class="form-control" id="ZeitVon" aria-describedby="emailHelp">
-            <small class="form-text text-muted">Zeitpunkt ab dem Geflaggt werden soll.</small>
-        </div>
-        <div class="form-group">
-            <label for="ZeitBis">Zeit bis</label>
-            <input type="time" class="form-control" id="ZeitBis" aria-describedby="emailHelp">
-            <small class="form-text text-muted">Zeitpunkt bis zu dem Geflaggt werden soll.</small>
-        </div>
-        <button class="btn btn-primary" type=""onclick="markieren()">Flaggen</button>
-
+    <div class="form-group">
+        <label for="DatumBis">Datum Bis</label>
+        <input type="date" class="form-control" id="DatumBis" aria-describedby="emailHelp">
+        <small class="form-text text-muted">Datum bis zu dem fahrten als gefährdet geflaggt werden sollen</small>
+    </div>
+    <div class="form-group">
+        <label for="ZeitVon">Zeit von</label>
+        <input type="time" class="form-control" id="ZeitVon" aria-describedby="emailHelp">
+        <small class="form-text text-muted">Zeitpunkt ab dem Geflaggt werden soll.</small>
+    </div>
+    <div class="form-group">
+        <label for="ZeitBis">Zeit bis</label>
+        <input type="time" class="form-control" id="ZeitBis" aria-describedby="emailHelp">
+        <small class="form-text text-muted">Zeitpunkt bis zu dem Geflaggt werden soll.</small>
+    </div>
+    <button class="btn btn-primary" type="" onclick="markieren()">Flaggen</button>
 
 <% }else{ %>
     <h1 class="display-1">Keine Nutzer da :(</h1>
 <% } %>
+
+<form action="/ArztFahrt">
+    <input type="submit" class="btn btn-primary" value="ArztFahrt"/>
+</form>
 
 <br>
 <footer class="footer" id="sticky-footer">

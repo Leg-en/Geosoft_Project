@@ -84,6 +84,8 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user; //Nutzer Daten Holen
     var FlagFahrten = [];
     var db = req.app.get("db");
+    //Funktioniert nicht wie geplant
+    /*
     if(Nutzer.recentFlagged.length > 0){
         for (var i = 0; i<Nutzer.recentFlagged.length;i++){
             var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.recentFlagged[i])}).toArray();
@@ -96,7 +98,7 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     var Fahrten = [];
     //Es waren mal 5 geplant. Aber irgendwie ist das Frontend damit überfordert
     //Todo: Daten über Ajax request Anfordern. Das ist wenigstens Stabil
-    for (var i = 0; i <Nutzer.Fahrten.length && i < 4; i++){
+    for (var i = 0; i <Nutzer.Fahrten.length && i < 5; i++){
         var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.Fahrten[i])}).toArray();
         Fahrten.push(fahrt[0])
     }
@@ -104,8 +106,9 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
         Fahrten = null;
     }
     db.collection("nutzer").updateOne({_id: Nutzer._id},{$set: {recentFlagged: []}})
-
-
+    */
+    var Fahrten = null;
+    var FlagFahrten = null;
 
     //Wenn Nutzer Arzt ist, zeige die Arzt seite an. Sonst nicht. Und Stellt den namen des Nutzers da
     if (Nutzer.Arzt) {
@@ -150,6 +153,20 @@ router.get('/Arzt', checkAuthenticated, isInRole, async (req, res, next) => {
         res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: null});
     }
 });
+
+router.get('/ArztFahrt', checkAuthenticated, isInRole, async (req, res, next) => {
+    var db = req.app.get("db");
+    var Nutzer = await req.user;
+    var Fahrt = await db.collection("fahrten").find({Geflaggt: "false"}).toArray();
+    console.log(Fahrt)
+
+    if (Nutzer.Arzt) {
+        res.render(viewdir + "/ArztMenueFahrt.ejs", {name: Nutzer.Name, Role: "Arzt Menü", Fahrt: Fahrt});
+    } else {
+        res.render(viewdir + "/ArztMenueFahrt.ejs", {name: Nutzer.Name, Role: null, Fahrt: Fahrt});
+    }
+});
+
 router.get('/Registrierung', checkNotAuthenticated, function (req, res, next) {
     res.render(viewdir + '/Registrierung.ejs');
 });
@@ -270,7 +287,9 @@ router.post("/Markieren", async (req, res) => {
             return;
         }
         if(dates.inRange(new Date(Fahrt[0].ISODate), dateVon, dateBis)){
-            if (!Fahrt.Geflaggt) {
+            console.log(Fahrt[0].Geflaggt == "false")
+            if (Fahrt[0].Geflaggt == "false") {
+
                 db.collection("fahrten").updateOne({_id: new mongodb.ObjectID(Fahrt[0]._id)}, {$set: {Geflaggt: true}})
                 //Todo: Nutzer Email über Flaggung Senden
 
@@ -309,7 +328,36 @@ router.post("/Markieren", async (req, res) => {
 
 
 })
+router.post("/markierenFahrt", async (req, res) => {
+    var db = req.app.get("db");
 
+    var Fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(req.body.id)}).toArray();
+    console.log(Fahrt)
+    db.collection("fahrten").updateOne({_id: new mongodb.ObjectID(Fahrt[0]._id)}, {$set: {Geflaggt: true}})
+
+    for (var j = 0; j < Fahrt[0].Nutzer.length; j++) {
+        var nutzerFlag = await db.collection("nutzer").find({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}).toArray()
+        nutzerFlag[0].recentFlagged.push((Fahrt[0]._id))
+        nutzerFlag[0].flags.push((Fahrt[0]._id))
+        await db.collection("nutzer").updateOne({_id: new mongodb.ObjectID(Fahrt[0].Nutzer[j])}, {
+            $set: {
+                RecentFlags: true,
+                recentFlagged: nutzerFlag[0].recentFlagged,
+                flags: nutzerFlag[0].flags,
+            }
+        })
+        try{
+            let info = mailTransporter.sendMail({
+                from: 'CoronaWarnseiteWWU@web.de', // sender address
+                to: nutzerFlag[0].Email, // list of receivers
+                subject: "CoronaWarnTrackingWWU", // Subject line
+                html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name +" am " + Fahrt[0].Datum + "." // html body
+            })
+        }catch (e){
+            console.log(e)
+        }
+}
+})
 
 //Sendet Fahrten des Eingeloggten Nutzers
 router.get("/getFahrten", async (req, res) => {
@@ -325,6 +373,34 @@ router.get("/getFahrten", async (req, res) => {
     var result = {Fahrten: Fahrten};
     res.json(result);
 })
+//Workaround
+router.get("/getStartseite", async (req, res) =>{
+    var Nutzer = await req.user; //Nutzer Daten Holen
+    var FlagFahrten = [];
+    var db = req.app.get("db");
+    if(Nutzer.recentFlagged.length > 0){
+        for (var i = 0; i<Nutzer.recentFlagged.length;i++){
+            var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.recentFlagged[i])}).toArray();
+            FlagFahrten.push(fahrt[0])
+        }
+    }else {
+        FlagFahrten = null;
+    }
+    var Fahrten = [];
+    //Es waren mal 5 geplant. Aber irgendwie ist das Frontend damit überfordert
+    //Todo: Daten über Ajax request Anfordern. Das ist wenigstens Stabil
+    for (var i = 0; i <Nutzer.Fahrten.length && i < 5; i++){
+        var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.Fahrten[i])}).toArray();
+        Fahrten.push(fahrt[0])
+    }
+    if (Fahrten.length == 0){
+        Fahrten = null;
+    }
+    db.collection("nutzer").updateOne({_id: Nutzer._id},{$set: {recentFlagged: [], RecentFlags: false}})
+    var data = {Fahrten: Fahrten, FlagFahrten: FlagFahrten}
+    res.json(data);
+})
+
 
 /**
  * Überprüft ob Nutzer Authentifiziert ist. Wenn ja darf er weiter, wenn nicht geht er zum Login

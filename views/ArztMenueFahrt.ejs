@@ -6,51 +6,48 @@
     <link rel="stylesheet" href="/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="../stylesheets/style.css">
-    <link href="/markercluster/MarkerCluster.css" rel="stylesheet">
-    <link href="/markercluster/MarkerCluster.Default.css" rel="stylesheet">
-
 
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <a class="nav-item nav-link" href="Startseite">Startseite</a>
             <a class="nav-item nav-link" href="fahrtdef">Fahrt Tätigen</a>
-            <a class="nav-item nav-link active" href="GetaetigteFahrten">Getaetigte Fahrten<span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten</a>
             <% if (Role) { %>
-                <a class="nav-item nav-link" href="Arzt"> <%= Role %></a>
+                <a class="nav-item nav-link active" href="Arzt"> <%= Role %></a>
             <% } %>
             <a class="nav-item nav-link" href="#" id="logout">Logout</a>
         </div>
     </div>
 </nav>
-<h4 class="display-4 text-center">Getätigte Fahrten</h4>
+
 <br>
 
-<div class="container mw-100">
-    <div class="row">
-        <div class="col-lg-6">
-            <div id="mapid"></div>
-        </div>
-        <div class="col-lg-6">
-            <div id="tab" class="table"></div>
+<% if (Fahrt){ %>
 
-
-
-        </div>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Fahrt Wählen</label>
+        <select class="form-control" id="Fahrt">
+            <% for(var i = 0; i < Fahrt.length; i++){ %>
+                <option value="<%= Fahrt[i]._id %>">Name: <%= Fahrt[i].Name %>, Abfahrdatum: <%=Fahrt[i].Datum%> , Abfahrtszeit: <%= Fahrt[i].Zeit%> Uhr, Haltestellenname:  <%=Fahrt[i].Haltestellenname%></option>
+            <% } %>
+        </select>
     </div>
-</div>
 
+    <button class="btn btn-primary" type="" onclick="markieren()">Flaggen</button>
 
-
+<% }else{ %>
+    <h1 class="display-1">Keine Fahrt da :(</h1>
+<% } %>
 
 <br>
-
 <footer class="footer" id="sticky-footer">
     <div class="container text-center">
         <span class="text-muted">
@@ -62,13 +59,10 @@
 </footer>
 
 
-
 <script src="/leaflet/leaflet.js"></script>
 <script src="/jquery/jquery.js"></script>
 <script src="/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="/markercluster/leaflet.markercluster.js"></script>
-<script type="text/javascript" src="../javascripts/Map.js"></script>
-<script src="../javascripts/getaetigteFahrten.js"></script>
+<script src="../javascripts/ArztMenueFahrt.js"></script>
 <script type="text/javascript" src="../javascripts/LogInAndOut.js"></script>
 </body>
 </html>
