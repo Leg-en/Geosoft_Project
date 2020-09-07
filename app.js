@@ -10,6 +10,7 @@ var app = express();
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
+const bcrypt = require('bcrypt')
 
 
 
@@ -93,10 +94,27 @@ async function connectMongoDB() {
         app.locals.db = await app.locals.dbConnection.db("geosoftproject");
         console.log("Using db: " + app.locals.db.databaseName);
         app.set("db", app.locals.db);
+        createAdmin();
     }
     catch (error) {
         console.dir(error)
         setTimeout(connectMongoDB(), 3000)
+    }
+}
+async function createAdmin(){
+    var Admin = await app.locals.db.collection("nutzer").find({admin: true}).toArray();
+    if(Admin.length == 0){
+        app.locals.db.collection("nutzer").insertOne({
+            Name: "admin",
+            Email: "admin@admin",
+            password: await bcrypt.hash("admin", 10),
+            Arzt: true,
+            Fahrten: [], //Fahrten Array ist noch Leer. Nutzer kann offensichtlicherweise noch keine Fahrten gemacht haben.
+            RecentFlags: false,
+            recentFlagged: [],
+            flags: [],
+            admin: true,
+        })
     }
 }
 

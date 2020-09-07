@@ -20,7 +20,6 @@ const mailTransporter = nodemailer.createTransport({
 });
 
 
-
 //Quelle  für dates: https://stackoverflow.com/questions/492994/compare-two-dates-with-javascript
 var dates = {
     convert: function (d) {
@@ -112,9 +111,19 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
 
     //Wenn Nutzer Arzt ist, zeige die Arzt seite an. Sonst nicht. Und Stellt den namen des Nutzers da
     if (Nutzer.Arzt) {
-        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: "Arzt Menü", FlagFahrten: FlagFahrten, Fahrten: Fahrten});
+        res.render(viewdir + "/Startseite.ejs", {
+            name: Nutzer.Name,
+            Role: "Arzt Menü",
+            FlagFahrten: FlagFahrten,
+            Fahrten: Fahrten
+        });
     } else {
-        res.render(viewdir + "/Startseite.ejs", {name: Nutzer.Name, Role: null, FlagFahrten: FlagFahrten, Fahrten: Fahrten});
+        res.render(viewdir + "/Startseite.ejs", {
+            name: Nutzer.Name,
+            Role: null,
+            FlagFahrten: FlagFahrten,
+            Fahrten: Fahrten
+        });
     }
 
 });
@@ -208,6 +217,7 @@ router.post("/register", checkNotAuthenticated, async (req, res) => {
             RecentFlags: false,
             recentFlagged: [],
             flags: [],
+            admin: false,
         })
         //Nach Erfolgreicher Registierung auf Login redirecten
         res.redirect("/Login")
@@ -282,11 +292,11 @@ router.post("/Markieren", async (req, res) => {
         //Zeitüberprüfung
         var dateVon = new Date(req.body.ISOdateVon)
         var dateBis = new Date(req.body.ISOdateBis)
-        if(dates.compare(dateVon, dateBis) != -1){
+        if (dates.compare(dateVon, dateBis) != -1) {
             console.log("Datum falsch rum")
             return;
         }
-        if(dates.inRange(new Date(Fahrt[0].ISODate), dateVon, dateBis)){
+        if (dates.inRange(new Date(Fahrt[0].ISODate), dateVon, dateBis)) {
             console.log(Fahrt[0].Geflaggt == "false")
             if (Fahrt[0].Geflaggt == "false") {
 
@@ -307,14 +317,14 @@ router.post("/Markieren", async (req, res) => {
                     })
 
                     //Um hier fehler zu Vermeiden währe evtl. eine Verifizierung der Email Sinnvoll.
-                    try{
+                    try {
                         let info = mailTransporter.sendMail({
                             from: 'CoronaWarnseiteWWU@web.de', // sender address
                             to: nutzerFlag[0].Email, // list of receivers
                             subject: "CoronaWarnTrackingWWU", // Subject line
-                            html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name +" am " + Fahrt[0].Datum + "." // html body
+                            html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
                         })
-                    }catch (e){
+                    } catch (e) {
                         console.log(e)
                     }
 
@@ -323,11 +333,34 @@ router.post("/Markieren", async (req, res) => {
         }
 
 
-
     }
 
 
 })
+router.get("/setup",checkAuthenticated, isAdmin, (req, res) => {
+    res.render(viewdir + "/Setup.ejs")
+})
+
+router.get("/keys",checkAuthenticated, async (req, res) => {
+    var db = req.app.get("db");
+    var keys = await db.collection("APIKeys").find({}).toArray();
+    res.json(keys[0]);
+})
+
+//Zugang Evtl nur für Admins
+router.post("/setup",checkAuthenticated, isAdmin, async (req, res) => {
+    var db = req.app.get("db");
+    //Updaten oder Löschen
+    var olddata = await db.collection("APIKeys").find({}).toArray();
+    if(olddata.length != 0){
+        db.collection("APIKeys").updateOne({_id: new mongodb.ObjectID(olddata[0]._id)},{$set: {HereAPIKey: req.body.HereAPIKey, MapboxAPIKey: req.body.MapboxAPIKey}})
+    }else {
+        db.collection("APIKeys").insertOne(req.body)
+    }
+    //Ich würde gerne einfach nur eine Bestätigung senden das es geklappt hat. Aber bei jeglichen status codes etc wird mir nur noch der Status Code eingeblendet. Wie umgeht man das?!
+    res.redirect("/login")
+})
+
 router.post("/markierenFahrt", async (req, res) => {
     var db = req.app.get("db");
 
@@ -346,17 +379,17 @@ router.post("/markierenFahrt", async (req, res) => {
                 flags: nutzerFlag[0].flags,
             }
         })
-        try{
+        try {
             let info = mailTransporter.sendMail({
                 from: 'CoronaWarnseiteWWU@web.de', // sender address
                 to: nutzerFlag[0].Email, // list of receivers
                 subject: "CoronaWarnTrackingWWU", // Subject line
-                html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name +" am " + Fahrt[0].Datum + "." // html body
+                html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
             })
-        }catch (e){
+        } catch (e) {
             console.log(e)
         }
-}
+    }
 })
 
 //Sendet Fahrten des Eingeloggten Nutzers
@@ -374,29 +407,29 @@ router.get("/getFahrten", async (req, res) => {
     res.json(result);
 })
 //Workaround
-router.get("/getStartseite", async (req, res) =>{
+router.get("/getStartseite", async (req, res) => {
     var Nutzer = await req.user; //Nutzer Daten Holen
     var FlagFahrten = [];
     var db = req.app.get("db");
-    if(Nutzer.recentFlagged.length > 0){
-        for (var i = 0; i<Nutzer.recentFlagged.length;i++){
+    if (Nutzer.recentFlagged.length > 0) {
+        for (var i = 0; i < Nutzer.recentFlagged.length; i++) {
             var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.recentFlagged[i])}).toArray();
             FlagFahrten.push(fahrt[0])
         }
-    }else {
+    } else {
         FlagFahrten = null;
     }
     var Fahrten = [];
     //Es waren mal 5 geplant. Aber irgendwie ist das Frontend damit überfordert
     //Todo: Daten über Ajax request Anfordern. Das ist wenigstens Stabil
-    for (var i = 0; i <Nutzer.Fahrten.length && i < 5; i++){
+    for (var i = 0; i < Nutzer.Fahrten.length && i < 5; i++) {
         var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.Fahrten[i])}).toArray();
         Fahrten.push(fahrt[0])
     }
-    if (Fahrten.length == 0){
+    if (Fahrten.length == 0) {
         Fahrten = null;
     }
-    db.collection("nutzer").updateOne({_id: Nutzer._id},{$set: {recentFlagged: [], RecentFlags: false}})
+    db.collection("nutzer").updateOne({_id: Nutzer._id}, {$set: {recentFlagged: [], RecentFlags: false}})
     var data = {Fahrten: Fahrten, FlagFahrten: FlagFahrten}
     res.json(data);
 })
@@ -445,5 +478,15 @@ async function isInRole(req, res, next) {
     }
     next();
 }
+
+async function isAdmin(req, res, next) {
+    var Nutzer = await req.user
+    console.log(Nutzer)
+    if (!Nutzer.admin) {
+        return res.redirect("/Startseite") //Todo: Durch Fehlermeldung Ergänzen
+    }
+    next();
+}
+
 
 module.exports = router;
