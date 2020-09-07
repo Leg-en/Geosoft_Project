@@ -12,6 +12,11 @@ Email: CoronaWarnseiteWWU@web.de <br>
 Passwort: WWUCorona
 
 ## Default Admin Konto Login
-Nutzername: admin <br>
-Passwort: admin <br>
-Email: admin@admin <br>
+Nutzername: `admin` <br>
+Passwort: `admin` <br>
+Email: `admin@admin` <br>
+
+## Docker
+- Evtl alte Docker Images Löschen (?)
+    - Mit `docker system prune -a` werden alle Images gelöscht
+- Compose starten mit `docker-compose up`
