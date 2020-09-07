@@ -7,7 +7,7 @@ function mapInit() {
         id: 'mapbox/streets-v11',
         tileSize: 512,
         zoomOffset: -1,
-        accessToken: MapboxKey 
+        accessToken: MapboxKey
     }).addTo(mymap);
     map = mymap;
 }
