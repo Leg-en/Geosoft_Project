@@ -1,5 +1,20 @@
-getData()
-//Todo: Karte Hinzufügem
+var  HereKey;
+var MapboxKey;
+getKeys()
+function getKeys(){
+    $.ajax({
+        url: "/keys",
+        success: function (data, stauts, xhr){
+            HereKey =  data.HereAPIKey;
+            MapboxKey  = data.MapboxAPIKey;
+            mapInit()
+            getData()
+        }
+    })
+}
+
+
+
 function display(processedData) {
     var TableElem = ["Datum", "Zeit", "Typ", "Name", "Headsign", "Haltestelle", "Geflaggt"]
     document.getElementById("tab").innerHTML = "";
@@ -36,7 +51,7 @@ function display(processedData) {
         var cell = document.createElement('td')
         cell.appendChild(document.createTextNode(processedData[i].headsign))
         row.appendChild(cell);
-        //Todo: Evtl wieder Haltestelle ergänzen?
+
         var cell = document.createElement('td')
         cell.appendChild(document.createTextNode(processedData[i].Haltestellenname))
         row.appendChild(cell);

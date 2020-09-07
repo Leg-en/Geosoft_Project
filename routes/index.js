@@ -83,29 +83,6 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user; //Nutzer Daten Holen
     var FlagFahrten = [];
     var db = req.app.get("db");
-    //Funktioniert nicht wie geplant
-    /*
-    if(Nutzer.recentFlagged.length > 0){
-        for (var i = 0; i<Nutzer.recentFlagged.length;i++){
-            var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.recentFlagged[i])}).toArray();
-            FlagFahrten.push(fahrt[0])
-        }
-    }else {
-        FlagFahrten = null;
-    }
-    console.log(Nutzer);
-    var Fahrten = [];
-    //Es waren mal 5 geplant. Aber irgendwie ist das Frontend damit überfordert
-    //Todo: Daten über Ajax request Anfordern. Das ist wenigstens Stabil
-    for (var i = 0; i <Nutzer.Fahrten.length && i < 5; i++){
-        var fahrt = await db.collection("fahrten").find({_id: new mongodb.ObjectID(Nutzer.Fahrten[i])}).toArray();
-        Fahrten.push(fahrt[0])
-    }
-    if (Fahrten.length == 0){
-        Fahrten = null;
-    }
-    db.collection("nutzer").updateOne({_id: Nutzer._id},{$set: {recentFlagged: []}})
-    */
     var Fahrten = null;
     var FlagFahrten = null;
 
@@ -125,11 +102,6 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
             Fahrten: Fahrten
         });
     }
-
-});
-//Letzte Sendfile anweisung die auf alten HTMLs beruht. Evtl entfernen da sie nicht mit dem backend verknüpft ist
-router.get('/fahrt', checkAuthenticated, function (req, res, next) {
-    res.sendFile(publicdir + '/FahrtTaetigen.html');
 
 });
 //Fahrt Tätitgen
@@ -280,7 +252,7 @@ router.post("/setFahrten", checkAuthenticated, async (req, res) => {
     }
 })
 
-//Todo: Nach Zeit Filtern
+
 router.post("/Markieren", async (req, res) => {
     var db = req.app.get("db");
     var user = req.body;
@@ -301,7 +273,7 @@ router.post("/Markieren", async (req, res) => {
             if (Fahrt[0].Geflaggt == "false") {
 
                 db.collection("fahrten").updateOne({_id: new mongodb.ObjectID(Fahrt[0]._id)}, {$set: {Geflaggt: true}})
-                //Todo: Nutzer Email über Flaggung Senden
+
 
                 //Alle Mitfahrer des Fahrtes des Nutzers durchgehen
                 for (var j = 0; j < Fahrt[0].Nutzer.length; j++) {

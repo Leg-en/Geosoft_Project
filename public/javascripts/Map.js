@@ -1,8 +1,3 @@
-mapInit()
-
-
-
-
 var  map;
 function mapInit() {
     var mymap = L.map('mapid').setView([51.505, -0.09], 13);
@@ -12,7 +7,7 @@ function mapInit() {
         id: 'mapbox/streets-v11',
         tileSize: 512,
         zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoibGVnZW4yNiIsImEiOiJja2FremZxdTIwNTZpMnpucWw2d2Q3anJ3In0.exarKxsiFDy1QZKMYHvlNQ' //Todo: Entfernen
+        accessToken: MapboxKey 
     }).addTo(mymap);
     map = mymap;
 }

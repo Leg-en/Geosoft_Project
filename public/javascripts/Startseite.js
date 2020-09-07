@@ -2,8 +2,21 @@ var Fahrten;
 var FlagFahrten;
 
 
-requestData()
 
+var  HereKey;
+var MapboxKey;
+getKeys()
+function getKeys(){
+    $.ajax({
+        url: "/keys",
+        success: function (data, stauts, xhr){
+            HereKey =  data.HereAPIKey;
+            MapboxKey  = data.MapboxAPIKey;
+            mapInit()
+            requestData()
+        }
+    })
+}
 
 
 
@@ -87,7 +100,6 @@ function display(processedData, div, msg) {
         var cell = document.createElement('td')
         cell.appendChild(document.createTextNode(processedData[i].headsign))
         row.appendChild(cell);
-        //Todo: Evtl wieder Haltestelle ergänzen?
         var cell = document.createElement('td')
         cell.appendChild(document.createTextNode(processedData[i].Haltestellenname))
         row.appendChild(cell);
@@ -114,7 +126,7 @@ function display(processedData, div, msg) {
     document.getElementById(div).appendChild(table);
 }
 
-
+//Todo: Bugfix für darstellen von Doppelten Markern. (Wenn eine Fahrt recent ist und Geflaggt ist, wird sie zwei mal Angezeigt)
 function mapsetup() {
     var icon = L.icon({ //Hebt es farblich hervor. Größenskalierung stimmt noch nicht so ganz
         iconUrl: '../images/marker-icon-red.png',

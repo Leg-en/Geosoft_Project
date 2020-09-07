@@ -1,15 +1,15 @@
+getKeys()
+
 var Points = {
     pointA: null,
     pointB: null
 }
 var hereData = null;
 var processedData = null;
-var standortMarker = L.marker([0, 0]).addTo(map)
-standortMarker.setOpacity(0)
+var standortMarker;
 var markers = L.markerClusterGroup();
 var  HereKey;
 var MapboxKey;
-getKeys()
 
 function getKeys(){
     $.ajax({
@@ -17,6 +17,9 @@ function getKeys(){
         success: function (data, stauts, xhr){
             HereKey =  data.HereAPIKey;
             MapboxKey  = data.MapboxAPIKey;
+            mapInit()
+            standortMarker = L.marker([0, 0]).addTo(map)
+            standortMarker.setOpacity(0)
         }
     })
 }
@@ -33,7 +36,7 @@ function requestData(Start) {
             data: {
                 in: Start[1] + "," + Start[0],
                 lang: 'de-DE',
-                apiKey: HereKey, //Todo: Löschen
+                apiKey: HereKey,
 
             },
             dataType: 'json',
@@ -207,7 +210,7 @@ function geocoding(Input, point) {
             data: {
                 autocomplete: 'true',
                 language: 'de',
-                access_token: MapboxKey //Todo: Löschen
+                access_token: MapboxKey
             },
             dataType: 'json',
             timeout: 3000,
@@ -272,7 +275,7 @@ function reverseGeocoding(lat, lng) {
         {
             url: "https://api.mapbox.com/geocoding/v5/mapbox.places/" + lng + "," + lat + ".json?",
             data: {
-                access_token: MapboxKey //Todo: Löschen
+                access_token: MapboxKey
             },
             dataType: 'json',
             timeout: 3000,
