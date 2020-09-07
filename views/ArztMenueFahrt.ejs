@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="../stylesheets/style.css">
+    <link href="/markercluster/MarkerCluster.css" rel="stylesheet">
+    <link href="/markercluster/MarkerCluster.Default.css" rel="stylesheet">
 
 </head>
 <body>
@@ -29,23 +31,35 @@
 </nav>
 
 <br>
+<div class="container mw-100">
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="mapid"></div>
+        </div>
+        <div class="col-lg-6">
+            <% if (Fahrt){ %>
 
-<% if (Fahrt){ %>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Fahrt Wählen</label>
+                    <select class="form-control" id="Fahrt">
+                        <% for(var i = 0; i < Fahrt.length; i++){ %>
+                            <option value="<%= Fahrt[i]._id %>">Name: <%= Fahrt[i].Name %>, Abfahrdatum: <%=Fahrt[i].Datum%> , Abfahrtszeit: <%= Fahrt[i].Zeit%> Uhr, Haltestellenname:  <%=Fahrt[i].Haltestellenname%></option>
+                        <% } %>
+                    </select>
+                </div>
 
-    <div class="form-group">
-        <label for="exampleFormControlSelect1">Fahrt Wählen</label>
-        <select class="form-control" id="Fahrt">
-            <% for(var i = 0; i < Fahrt.length; i++){ %>
-                <option value="<%= Fahrt[i]._id %>">Name: <%= Fahrt[i].Name %>, Abfahrdatum: <%=Fahrt[i].Datum%> , Abfahrtszeit: <%= Fahrt[i].Zeit%> Uhr, Haltestellenname:  <%=Fahrt[i].Haltestellenname%></option>
+                <button class="btn btn-primary" type="" onclick="markieren()">Flaggen</button>
+
+            <% }else{ %>
+                <h1 class="display-1">Keine Fahrt da :(</h1>
             <% } %>
-        </select>
+
+
+        </div>
     </div>
+</div>
 
-    <button class="btn btn-primary" type="" onclick="markieren()">Flaggen</button>
 
-<% }else{ %>
-    <h1 class="display-1">Keine Fahrt da :(</h1>
-<% } %>
 
 <br>
 <footer class="footer" id="sticky-footer">
@@ -62,6 +76,8 @@
 <script src="/leaflet/leaflet.js"></script>
 <script src="/jquery/jquery.js"></script>
 <script src="/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="/markercluster/leaflet.markercluster.js"></script>
+<script src="../javascripts/Map.js"></script>
 <script src="../javascripts/ArztMenueFahrt.js"></script>
 <script type="text/javascript" src="../javascripts/LogInAndOut.js"></script>
 </body>

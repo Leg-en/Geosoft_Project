@@ -105,7 +105,7 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
 
 });
 //Fahrt Tätitgen
-router.get('/fahrtdef', checkAuthenticated, async (req, res, next) => {
+router.get('/fahrtb', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user;
     if (Nutzer.Arzt) {
         res.render(viewdir + "/FahrtTaetigen.ejs", {name: Nutzer.Name, Role: "Arzt Menü"});
@@ -113,6 +113,16 @@ router.get('/fahrtdef', checkAuthenticated, async (req, res, next) => {
         res.render(viewdir + "/FahrtTaetigen.ejs", {name: Nutzer.Name, Role: null});
     }
 });
+//Fahrt Tätitgen
+router.get('/fahrtdef', checkAuthenticated, async (req, res, next) => {
+    var Nutzer = await req.user;
+    if (Nutzer.Arzt) {
+        res.render(viewdir + "/FahrtTaetigenEnhanced.ejs", {name: Nutzer.Name, Role: "Arzt Menü"});
+    } else {
+        res.render(viewdir + "/FahrtTaetigenEnhanced.ejs", {name: Nutzer.Name, Role: null});
+    }
+});
+
 //Getätigte Fahrten
 router.get('/GetaetigteFahrten', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user;
@@ -147,6 +157,12 @@ router.get('/ArztFahrt', checkAuthenticated, isInRole, async (req, res, next) =>
         res.render(viewdir + "/ArztMenueFahrt.ejs", {name: Nutzer.Name, Role: null, Fahrt: Fahrt});
     }
 });
+
+router.get("/ArztMarkData", checkAuthenticated, isInRole, async (req, res)=>{
+    var db = req.app.get("db");
+    var Fahrt = await db.collection("fahrten").find({Geflaggt: "false"}).toArray();
+    res.json({data: Fahrt})
+})
 
 router.get('/Registrierung', checkNotAuthenticated, function (req, res, next) {
     res.render(viewdir + '/Registrierung.ejs');
