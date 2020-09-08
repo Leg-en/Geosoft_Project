@@ -1,5 +1,10 @@
 # Geosoft Project
 
+## Allgemeine Infos
+Dies ist der Master Branch von dem aus immer neue Docker images generiert werden. Entsprechend sollte man wenn man ohne Docker Starten möchte vom
+LocalStart branch aus Starten. Der HTTPs Branch ist quasi identisch zum LocalStart, bis auf die Tatsache das dieser einen HTTPs Server mit selbst Signierten
+Zertifikaten benutzt. 
+
 ## Server Starten
 - Im hauptverzeichnis des  Projekts  datenbank  Starten
 `mongod --dbpath data`
@@ -20,3 +25,9 @@ Email: `admin@admin` <br>
 - Evtl alte Docker Images Löschen (?)
     - Mit `docker system prune -a` werden alle Images gelöscht
 - Compose starten mit `docker-compose up`
+
+# Highlights 
+- Automatisches Versenden von Mails bei Krankheit
+- HTTPs Unterstützung. (Bei Einsatz in Produktiv Umgebung sollten richtige Zertifikate geholt werden)
+- Login System mit Verschlüsseltem Passwort
+
