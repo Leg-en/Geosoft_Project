@@ -7,6 +7,10 @@
 var app = require('../app');
 var debug = require('debug')('geosoft-project:server');
 var http = require('http');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +23,14 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app); //Evtl durch Https ersetzen?
+const options = {
+  key: fs.readFileSync(path.normalize(__dirname + "/..") +'/key.pem'),
+  cert: fs.readFileSync(path.normalize(__dirname + "/..") +'/cert.pem')
+};
+
+
+var server =  https.createServer(options, app)
+//Evtl durch Https ersetzen?
 
 /**
  * Listen on provided port, on all network interfaces.
