@@ -91,7 +91,7 @@ async function connectMongoDB() {
     try {
         //connect to database server
         //Wenn nicht mit Docker verwendet wir zu mongodb://localhost:27017 ändern
-        app.locals.dbConnection = await mongodb.MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }); //Alte URL "mongodb://root:rootpassword@mongodbservice:27017"
+        app.locals.dbConnection = await mongodb.MongoClient.connect("mongodb://root:rootpassword@mongodbservice:27017", { useNewUrlParser: true, useUnifiedTopology: true }); //Alte URL "mongodb://root:rootpassword@mongodbservice:27017"
         app.locals.db = await app.locals.dbConnection.db("geosoftproject");
         console.log("Using db: " + app.locals.db.databaseName);
         app.set("db", app.locals.db);
