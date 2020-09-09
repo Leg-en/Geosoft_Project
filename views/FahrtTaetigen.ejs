@@ -20,7 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <a class="nav-item nav-link" href="Startseite">Startseite</a>
-            <a class="nav-item nav-link active" href="fahrtdef">Fahrt Tätigen<span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="fahrtdef">Fahrt tätigen<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten<span
                         class="sr-only">(current)</span></a>
             <% if (Role) { %>
@@ -38,7 +38,7 @@
             <div id="mapid"></div>
         </div>
         <div class="col-lg-6">
-            <h4 class="display-4"> Abfahrts Parameter</h4>
+            <h4 class="display-4"> Abfahrtsparameter</h4>
 
             <div class="form-group">
                 <label for="Start" id="startLabel" placeholder="Musterstraße 0, Musterstadt">Start Punkt</label>
@@ -47,16 +47,16 @@
 
 
             <button class="btn btn-primary" onclick="main()" type="submit">Suchen</button>
-            <button class="btn btn-primary" onclick="locate()" type="submit">Standpunt als Startpunkt</button>
+            <button class="btn btn-primary" onclick="locate()" type="submit">Standpunkt als Startpunkt</button>
             <div id="Ort"></div>
             <div id="tab" class="table"></div>
 
             <br>
             <div class="form-group">
-                <label for="Anzahl" id="AnzahlLabel" placeholder="0">Fahrt Nummer Wählen</label>
+                <label for="Anzahl" id="AnzahlLabel" placeholder="0">Fahrtnummer wählen</label>
                 <input class="form-control" id="Anzahl" value="0" placeholder="0" type="number">
             </div>
-            <button class="btn btn-primary" onclick="setData()" type="submit">Als  Gefahren Markieren</button>
+            <button class="btn btn-primary" onclick="setData()" type="submit">Als  Gefahren markieren</button>
 
         </div>
     </div>

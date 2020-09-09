@@ -20,7 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <a class="nav-item nav-link" href="Startseite">Startseite</a>
-            <a class="nav-item nav-link active" href="fahrtdef">Fahrt Tätigen<span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="fahrtdef">Fahrt tätigen<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten<span
                         class="sr-only">(current)</span></a>
             <% if (Role) { %>
@@ -38,20 +38,20 @@
             <div id="mapid"></div>
             <br>
             <form action="/fahrtb">
-                <button class="btn btn-primary">Dir Gefällt nicht was du siehst? Probiere die  alte Ansicht</button>
+                <button class="btn btn-primary">Dir gefällt nicht was du siehst? Probiere die  alte Ansicht</button>
             </form>
         </div>
         <div class="col-lg-6">
-            <h4 class="display-4"> Abfahrts Parameter</h4>
+            <h4 class="display-4"> Abfahrtsparameter</h4>
 
             <div class="form-group">
-                <label for="Start" id="startLabel" placeholder="Musterstraße 0, Musterstadt">Start Punkt</label>
+                <label for="Start" id="startLabel" placeholder="Musterstraße 0, Musterstadt">Startpunkt</label>
                 <input class="form-control" id="Start" placeholder="Musterstraße 0, Musterstadt" type="text">
             </div>
 
 
             <button class="btn btn-primary" onclick="main()" type="submit">Suchen</button>
-            <button class="btn btn-primary" onclick="locate()" type="submit">Standpunt als Startpunkt</button>
+            <button class="btn btn-primary" onclick="locate()" type="submit">Standpunkt als Startpunkt</button>
             <div id="Ort"></div>
             <br>
             <div id="tab" class="table"></div>

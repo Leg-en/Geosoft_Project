@@ -20,7 +20,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <a class="nav-item nav-link" href="Startseite">Startseite</a>
-            <a class="nav-item nav-link" href="fahrtdef">Fahrt Tätigen</a>
+            <a class="nav-item nav-link" href="fahrtdef">Fahrt tätigen</a>
             <a class="nav-item nav-link" href="GetaetigteFahrten">Getaetigte Fahrten</a>
             <% if (Role) { %>
                 <a class="nav-item nav-link active" href="Arzt"> <%= Role %></a>
@@ -40,10 +40,10 @@
             <% if (Fahrt){ %>
 
                 <div class="form-group">
-                    <label for="exampleFormControlSelect1">Fahrt Wählen</label>
+                    <label for="exampleFormControlSelect1">Fahrt wählen</label>
                     <select class="form-control" id="Fahrt">
                         <% for(var i = 0; i < Fahrt.length; i++){ %>
-                            <option value="<%= Fahrt[i]._id %>">Name: <%= Fahrt[i].Name %>, Abfahrdatum: <%=Fahrt[i].Datum%> , Abfahrtszeit: <%= Fahrt[i].Zeit%> Uhr, Haltestellenname:  <%=Fahrt[i].Haltestellenname%></option>
+                            <option value="<%= Fahrt[i]._id %>">Name: <%= Fahrt[i].Name %>, Abfahrtsdatum: <%=Fahrt[i].Datum%> , Abfahrtszeit: <%= Fahrt[i].Zeit%> Uhr, Haltestellenname:  <%=Fahrt[i].Haltestellenname%></option>
                         <% } %>
                     </select>
                 </div>

@@ -135,7 +135,7 @@ function printData() {
     }
     document.getElementById("tab").appendChild(select);
     var button = document.createElement("button")
-    button.innerText = "Ausgewählte Fart als gefahren Markieren"
+    button.innerText = "Ausgewählte Fart als gefahren markieren"
     button.classList.add("btn")
     button.classList.add("btn-primary")
     button.onclick = setData;
