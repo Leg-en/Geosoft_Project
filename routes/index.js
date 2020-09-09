@@ -310,7 +310,7 @@ router.post("/Markieren", async (req, res) => {
                             from: 'CoronaWarnseiteWWU@web.de', // sender address
                             to: nutzerFlag[0].Email, // list of receivers
                             subject: "CoronaWarnTrackingWWU", // Subject line
-                            html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
+                            html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
                         })
                     } catch (e) {
                         console.log(e)
@@ -372,7 +372,7 @@ router.post("/markierenFahrt", async (req, res) => {
                 from: 'CoronaWarnseiteWWU@web.de', // sender address
                 to: nutzerFlag[0].Email, // list of receivers
                 subject: "CoronaWarnTrackingWWU", // Subject line
-                html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko Klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
+                html: "<b>Guten Tag</b> <br> Sie wurden auf der Corona Warnseite als Risiko klassifiziert! Es handelt sich um die Fahrt mit der " + Fahrt[0].Name + " am " + Fahrt[0].Datum + "." // html body
             })
         } catch (e) {
             console.log(e)
