@@ -1,16 +1,16 @@
 # Geosoft Project
 
 ## Allgemeine Infos
-Dies ist der Master Branch von dem aus immer neue Docker images generiert werden. Entsprechend sollte man wenn man ohne Docker Starten möchte vom
-LocalStart branch aus Starten. Der HTTPs Branch ist quasi identisch zum LocalStart, bis auf die Tatsache das dieser einen HTTPs Server mit selbst Signierten
+Dies ist der Master Branch von dem aus immer neue Docker images generiert werden. Entsprechend sollte man wenn man ohne Docker starten möchte vom
+LocalStart branch aus starten. Der HTTPs Branch ist quasi identisch zum LocalStart, bis auf die Tatsache das dieser einen HTTPs Server mit selbst signierten
 Zertifikaten benutzt. 
 
-## Server Starten
-- Im hauptverzeichnis des  Projekts  datenbank  Starten
+## Server starten
+- Im Hauptverzeichnis des  Projekts  Datenbank  starten
 `mongod --dbpath data`
-- Im Hauptverzeichnis  Node Server  Starten `npm  start`
+- Im Hauptverzeichnis  Node Server  starten `npm  start`
   - Im  Bedarfsfall  mit npm vorher  dependencys  installieren `npm install` 
-- Als Admin Einloggen und /setup aufrufen und API Keys Eintragen
+- Als Admin einloggen und /setup aufrufen und API Keys eintragen
 
 ## Zugang zum Assoziierten Web de Konto
 Email: CoronaWarnseiteWWU@web.de <br>
@@ -22,12 +22,12 @@ Passwort: `admin` <br>
 Email: `admin@admin` <br>
 
 ## Docker
-- Evtl alte Docker Images Löschen (?)
+- Evtl alte Docker Images löschen (?)
     - Mit `docker system prune -a` werden alle Images gelöscht
 - Compose starten mit `docker-compose up`
 
 # Highlights 
-- Automatisches Versenden von Mails bei Krankheit
+- Automatisches versenden von Mails bei Krankheit
 - HTTPs Unterstützung. (Bei Einsatz in Produktiv Umgebung sollten richtige Zertifikate geholt werden)
 - Login System mit Verschlüsseltem Passwort
 
