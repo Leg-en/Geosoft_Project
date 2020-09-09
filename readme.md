@@ -10,7 +10,11 @@ Zertifikaten benutzt.
 `mongod --dbpath data`
 - Im Hauptverzeichnis  Node Server  starten `npm  start`
   - Im  Bedarfsfall  mit npm vorher  dependencys  installieren `npm install` 
-- Als Admin einloggen und /setup aufrufen und API Keys eintragen
+  
+- Als Admin Einloggen und /setup aufrufen und API Keys Eintragen
+- Dies ist der Branch der mit HTTPs Arbeitet. Entsprechend erfolgt hier der Zugriff statt einfach über `localhost` über
+    `https://127.0.0.1:80/`
+
 
 ## Zugang zum Assoziierten Web de Konto
 Email: CoronaWarnseiteWWU@web.de <br>
@@ -30,4 +34,3 @@ Email: `admin@admin` <br>
 - Automatisches versenden von Mails bei Krankheit
 - HTTPs Unterstützung. (Bei Einsatz in Produktiv Umgebung sollten richtige Zertifikate geholt werden)
 - Login System mit Verschlüsseltem Passwort
-
