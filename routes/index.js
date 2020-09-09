@@ -104,6 +104,10 @@ router.get('/Startseite', checkAuthenticated, async (req, res, next) => {
     }
 
 });
+router.get('/Test', async (req, res, next) => {
+res.render(viewdir + "/Tests.ejs")
+});
+
 //Fahrt Tätitgen
 router.get('/fahrtb', checkAuthenticated, async (req, res, next) => {
     var Nutzer = await req.user;
@@ -475,6 +479,13 @@ async function isAdmin(req, res, next) {
     }
     next();
 }
+//Die Funktion ist an sich sinnlos, wird aber benötigt damit wir den Teil der Tests irgendwie umsetzen können -.-
+router.get("/getAdminTest", async (req, res) => {
+    var db = req.app.get("db");
+    var admin =  await db.collection("nutzer").find({admin: true}).toArray();
+    res.json({data: admin})
+
+})
 
 
 module.exports = router;

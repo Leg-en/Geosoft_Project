@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "mongod --dbpath data &",
-    "start": "node ./bin/www",
-    "poststart": "kill &&"
+    "prestart": "start  mongod --dbpath data",
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -27,6 +26,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "mongodb": "^3.6.1"
+    "mongodb": "^3.6.1",
+    "qunit": "^2.11.1"
   }
 }
